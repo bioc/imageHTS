@@ -1,0 +1,41 @@
+importClassesFrom(Biobase, AnnotatedDataFrame, AssayData, data.frameOrNULL, MIAME, Versions, NChannelSet, eSet, VersionedBiobase, Versioned)
+importMethodsFrom(Biobase, fData)
+importFrom(Biobase, "assayDataNew")
+importClassesFrom(cellHTS2, cellHTS)
+importMethodsFrom(cellHTS2, annotate, configure, geneAnno, pdim, plate)
+importFrom(hwriter, hwrite, hwriteImage)
+importFrom(methods, getMethod, new, signature)
+importMethodsFrom(vsn, predict)
+importFrom(stats, cov, mad, mahalanobis, median, na.omit, quantile, sd,
+           var)
+importFrom(utils, browseURL, download.file, read.table, URLencode,
+           write.table)
+
+importFrom(e1071, svm, tune)
+importFrom(EBImage, closing, cmoments, dilate, distmap, erode,
+           fillHull, filter2, getNumberOfFrames, haralickFeatures,
+           hullFeatures, moments, ocontour, opening, paintObjects,
+           propagate, readImage, resize, rgbImage, rmObjects, tile,
+           translate, untile, watershed, writeImage, zernikeMoments)
+
+exportClasses("imageHTS")
+
+export(
+       ## core
+       "parseImageConf",
+
+       ## process well
+       "segmentWells", "extractFeatures", "readLearnTS", "predictCellLabels", "summarizeWells", "segmentATH", "getCellFtrsATH", 
+       
+       ## inspect screen data
+       "installWebQuery", "popWebQuery", "installCellPicker", "popCellPicker",
+
+       ## access
+       "fileHTS", "readHTS", "parseDCF", "collectCellFeatures", "getWellFeatures",
+
+       ## uname
+       "getUnames", "prw2uname", "uname2prw", "rowcol2well", "well2rowcol",
+
+       ## misc
+       "zprime", "highlightSegmentation",  "countObjects", "getImageConf"
+)

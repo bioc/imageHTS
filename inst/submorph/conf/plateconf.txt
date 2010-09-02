@@ -1,0 +1,7 @@
+Wells: 384
+Plates: 1
+Plate	Well	Content
+*	*	empty
+*	[AB]05	sample
+*	[AB]03	ubc
+*	[CD]03	rluc

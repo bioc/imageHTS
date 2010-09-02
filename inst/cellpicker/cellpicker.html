@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'> 
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta> 
+    <title>cellPicker</title>
+    <link rel="stylesheet" href="css/cellpicker.css">
+      <!--[if IE]>
+	  <link rel="stylesheet" type="text/css" href="css/ie.css">
+	    <!endif--></link>
+    <script type="text/javascript" src="javascript/wz_jsgraphics.js"></script> 
+    <script type="text/javascript" src="javascript/cellpicker_functions.js"></script> 
+  </head>
+  
+  <body>
+    imageHTS - Cellpicker<br/>
+    <script type="text/javascript" src="javascript/wz_tooltip.js"></script>    
+    <script type="text/javascript" src="javascript/var_ini.js"></script>
+    <script type="text/javascript" src="javascript/next_image.js"></script> 
+    <script language="JavaScript">  
+      <!--
+	  // title
+	  document.write("<center>");
+	  document.write('<div id="intro"></div>');
+	  
+	  // content below the title
+	  document.write('<div id="extra"></div>');
+	  
+	  // image	
+	  document.write("<table border=0>");
+	  document.write("<tr><td>");
+	  document.write("<div id=\"myPicture\">");
+	  document.write("<map id=\"map\" name=\"map\"></map>");	
+	  document.write("<img id=\"ima\" name=\"ima\" usemap=\"#map\" src=\"\" alt=\"\" border=0/>");
+	  document.write('<div id="myForm"></div>');
+	  document.write("</div>");
+	  
+	  // html form	
+	  document.write("</td>");				
+	  
+	  // Table displaying the selected cells
+	  document.write('<td style="vertical-align:top;">')
+	  document.write('<div id="displayed"></div>')
+	  document.write('</td>')
+	  document.write('</tr>')
+	  document.write("</table>");
+	  document.write("</center>");
+	  
+	  // initialization for the first image
+	  initializeImage(imageId);	
+	  //-->
+    </script>
+    
+  </body>
+</html>
+  

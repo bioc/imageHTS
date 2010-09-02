@@ -1,0 +1,28 @@
+seg.method: segmentATH
+
+nuc.athresh.filter: makeBrush(35, shape='box')/(35*35)
+nuc.athresh.t: 0.00424
+nuc.morpho.kernel: makeBrush(3, shape='diamond')
+nuc.watershed.tolerance: 3
+nuc.watershed.neighbourood: 2
+nuc.min.density: 0.1
+nuc.min.size: 150.0625
+nuc.max.size: 2070.25
+
+adj.a: 2.82*a - 0.17
+adj.t: 5.03*t - 0.35
+adj.h: 2.99*h - 0.15
+
+cell.thresh.filter: matrix(c(0,1,0,1,2,1,0,1,0)/6,nc=3,nr=3)
+cell.thresh.t: 0.12
+cell.morpho.kernel: makeBrush(3, shape='diamond')
+cell.propagate.lambda: 0.0001
+cell.propagate.mix.power: 0.2
+cell.min.density: 0.1
+cell.max.edgepratio: 0.3
+cell.min.size: 150.0625
+cell.max.size: 14491.75
+cell.max.perimeter: 769.3
+
+thumbnail.crop: 200, 100, 500, 200
+thumbnail.resize.width: 200

@@ -1,0 +1,7 @@
+AssayName: submorph
+SourceFilenamePattern: source/PK-{replicate}B-pl{plate}/Well-{row}0{col}/{channel}.jpeg
+PlateNames: 1
+ReplicateNames: 10, 11
+RowNames: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P
+ColNames: 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
+ChannelNames: Tritc, FITC, Hoechst

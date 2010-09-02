@@ -1,0 +1,612 @@
+%\VignetteIndexEntry{Analysis of high-throughput microscopy-based screens with imageHTS}
+%\VignetteKeywords{high-throughput, microscopy-based screens, image processing, high-content screening}
+%\VignettePackage{imageHTS}
+
+\documentclass[10pt,a4paper]{article}
+\RequirePackage{amsfonts,amsmath,amstext,amssymb,amscd}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{hyperref}
+\usepackage{color}
+\definecolor{darkblue}{rgb}{0.2,0.0,0.4}
+
+\topmargin -1.5cm
+\oddsidemargin -0cm   % read Lamport p.163
+\evensidemargin -0cm  % same as oddsidemargin but for left-hand pages
+\textwidth 17cm
+\textheight 24.5cm
+
+\newcommand{\lib}[1]{{\mbox{\normalfont\textsf{#1}}}}
+\newcommand{\file}[1]{{\mbox{\normalfont\textsf{'#1'}}}}
+\newcommand{\R}{{\mbox{\normalfont\textsf{R}}}}
+\newcommand{\Rfunction}[1]{{\mbox{\normalfont\texttt{#1}}}}
+\newcommand{\Robject}[1]{{\mbox{\normalfont\texttt{#1}}}}
+\newcommand{\Rpackage}[1]{{\mbox{\normalfont\textsf{#1}}}}
+\newcommand{\Rclass}[1]{{\mbox{\normalfont\textit{#1}}}}
+\newcommand{\code}[1]{{\mbox{\normalfont\texttt{#1}}}}
+
+\newcommand{\email}[1]{\mbox{\href{mailto:#1}{\textcolor{darkblue}{\normalfont{#1}}}}}
+\newcommand{\web}[2]{\mbox{\href{#2}{\textcolor{darkblue}{\normalfont{#1}}}}}
+
+\SweaveOpts{keep.source=TRUE,eps=FALSE,include=FALSE}
+
+\begin{document}
+
+\title{Analysis of high-throughput microscopy-based screens with imageHTS}
+\author{Gregoire Pau, Xian Zhang, Michael Boutros, Wolfgang Huber\\\email{gregoire.pau@embl.de}}
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+imageHTS is an R package dedicated to the analysis of high-throughput
+microscopy-based screens. The package provides a modular and
+extensible framework to segment cells, extract quantitative cell features,
+predict cell types and browse screen data through web interfaces. Designed
+to operate in distributed environments, imageHTS provides a standardized
+access to remote screen data, facilitating the dissemination of
+high-throughput microscopy-based screens.
+
+In the following, we first show how to use imageHTS to analyse a microscopy-based
+RNA interference (RNAi) screen by automated cell segmentation and extraction of
+morphological cell features. In a second example, we demonstrate how to access
+and analyse data from a remote screen repository.
+
+\section{Analysis of a microscopy-based screen}
+
+The \Robject{kimorph} screen is an RNAi screen where HeLa cells were fixed 48 h after
+siRNA transfection and stained for DNA, tubulin and actin. The screen assays 800
+siRNAs and is described in \cite{pmid20531400}. In this section, we are analyzing
+a 12-well subset of this screen, of reduced image quality (due to package size considerations),
+located in the \Robject{inst/submorph} directory of the imageHTS package.
+
+\subsection{Initialization}
+
+In imageHTS, screen data files can be accessed in two locations: in
+a local repository, indicated by \Robject{localPath}, or in an optional remote server
+designated by \Robject{serverURL}. If a file is not present in the local repository,
+e.g. for storage capacity reasons, imageHTS automatically retrieves the corresponding file
+from the remote server to the local repository. This dual repository feature is useful
+when screen data is stored in a different location from where it is analysed.
+
+After loading the package imageHTS, we initialize an imageHTS object with
+\Rfunction{parseImageConf}. The function takes 3
+arguments: an imageHTS configuration file and the variables \Robject{localPath} and
+\Robject{serverURL}. The imageHTS configuration file, in DCF format, describes
+the general screen configuration: where the microscopy images are located and how the
+plates and wells are named. We are using the imageHTS configuration file shown
+in section~\ref{sec:conf}. A detailed description of the imageHTS configuration
+file can be found in the manual pages of \Rfunction{parseImageConf}. We set the
+variable \Robject{localPath} to a temporary directory, for storing intermediate
+analysis files. The variable \Robject{serverURL} can point either to a directory
+or an external URL. In the following example, \Robject{serverURL} points to the
+submorph screen data directory of the imageHTS package, which contains the source
+images acquired from the microscope. 
+
+<<init, results=hide, echo=FALSE>>=
+display = function(...) {invisible()}
+@ 
+
+<<library, results=hide>>=
+library('imageHTS')
+@ 
+<<parseImageConf>>=
+localPath = tempdir()
+serverURL = system.file('submorph', package='imageHTS')
+x = parseImageConf('conf/imageconf.txt', localPath=localPath, serverURL=serverURL)
+@
+
+The imageHTS object \Robject{x} is now instantiated. The function \Rfunction{configure}
+configures the screen by providing the screen description, the plate configuration layout (how sample,
+control and empty wells are located in the plates) and the screen log. The
+function \Rfunction{annotate} sets up the mapping between reagents and gene targets.
+Both functions originate from the package cellHTS2, dedicated to the analysis
+of low-content RNAi screens \cite{pmid16869968}. The imageHTS class extends the
+cellHTS class and both functions are fully compatible with their cellHTS2 counterparts.
+See cellHTS2 documentation for details.
+
+<<configure>>=
+x = configure(x, 'conf/description.txt', 'conf/plateconf.txt', 'conf/screenlog.txt')
+x = annotate(x, 'conf/annotation.txt')
+@
+
+In imageHTS, each well is uniquely referred by an unique ID. Well unique IDs are
+generated by the function \Rfunction{getUnames}, which can filter wells
+according to their plate, replicate, row, column or content type
+(as described in the plate configuration file). The following example enumerates
+the wells that are not empty.
+
+<<getUnames>>=
+unames = setdiff(getUnames(x), getUnames(x, content='empty'))
+unames 
+@
+
+12 wells are non-empty in this screen. Metadata (plate, replicate, content, gene
+target, annotation) about the wells is retrieved using the function
+\Rfunction{getWellFeatures}.
+
+<<getWellFeatures>>=
+getWellFeatures(x, unames[1:3])
+@
+
+\subsection{Cell segmentation}
+
+Cells present in wells can be segmented using the function \Rfunction{segmentWells}.
+\Rfunction{segmentWells} is a high-level function that takes a vector of unique well
+IDs and a DCF segmentation parameter file. \Rfunction{segmentWells} uses the
+low-level segmentation function indicated by the field \Robject{seg.method} of
+the segmentation parameter file to segment individual well images. For each well,
+\Rfunction{segmentWells} writes in the local directory: calibrated image data 'cal',
+segmentation data 'seg' and several JPEG images. Files can be accessed later on with
+the functions \Robject{fileHTS} and \Robject{readHTS}, as shown in the sequel.
+
+If an unique well is given, \Rfunction{segmentWells} returns a list of three
+images: a calibrated image, a nucleus mask and a cell mask. The images can be
+manipulated with the package EBImage \cite{pmid20338898} and visualized using
+the command \Rfunction{display}. The function \Rfunction{highlightSegmentation}
+merges the calibrated image, the nucleus and cell masks to produce a composite image
+that highlights the segmentation information.
+
+In the following, we segment the third negative control well \Robject{rluc} using the
+segmentation parameter file shown in section~\ref{sec:conf}. The field \Robject{seg.method}
+of the file indicates the function \Robject{segmentATH} to segment the well. This
+function is specifically designed to segment cells stained for DNA and cytoskeletal
+proteins but any other segmentation function can be used, e.g. for segmenting yeast
+cells in bright field images or segmenting organelles stained with specific markers.
+
+<<segmentWells1>>=
+uname = getUnames(x, content='rluc')[3]
+print(uname)
+y =  segmentWells(x, uname=uname, segmentationPar='conf/segmentationpar.txt')
+display(y$cal)
+hseg = highlightSegmentation(0.6*y$cal, y$nseg, y$cseg, thick=TRUE)
+display(hseg)
+@ 
+<<segmentWells1h,echo=FALSE>>= 
+writeImage(y$cal, 'cal.jpeg', quality=80)
+writeImage(hseg, 'hseg.jpeg', quality=80)
+@
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.9\textwidth]{cal.jpeg}
+\caption{Calibrated image 'y\$cal' from well '001-02-C03'.}
+\end{center}
+\end{figure}
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.9\textwidth]{hseg.jpeg}
+\caption{Segmented image 'hseg' from well '001-02-C03'. Cell nucleus is
+  highlighted in yellow and cell membrane is indicated in magenta.}
+\end{center}
+\end{figure}
+
+Segmentation of the full screen is done with the following commands and
+takes about 4 minutes with a single processor. Since wells can be 
+segmented independently from each other, segmentation of the full screen
+can be easily parallelized using many processors. The following example
+is not run in this vignette, due to time constraints.
+
+<<segmentWells2,eval=FALSE>>=
+unames = setdiff(getUnames(x), getUnames(x, content='empty'))
+segmentWells(x, unames, 'conf/segmentationpar.txt')
+@ 
+
+In imageHTS, all screen data files can be accessed through the function
+\Rfunction{fileHTS}, including configuration files, source images, segmentation data, cell
+features and JPEG images. \Rfunction{fileHTS} creates paths pointing
+to screen data files, using a standardized naming scheme. The
+following example shows, for the well indicated by \Robject{uname},
+how to get access to first channel of the source image, calibrated image data,
+and the JPEG image of the well.
+
+<<fileHTS>>=
+fileHTS(x, type='source', uname=uname, channel=1)
+fileHTS(x, type='seg', uname=uname)
+fileHTS(x, type='viewfull', uname=uname)        
+@ 
+
+\subsection{Quantification of cell features}
+
+Quantification of cell features is done by the high-level 
+function \Rfunction{extractFeatures} on a set of wells,
+using a feature parameter file. Similar to the function
+\Rfunction{segmentWells}, \Rfunction{extractFeatures} uses the function
+indicated by the field \Robject{extractfeatures.method} of the feature
+parameter file to extract cell features. For each well, \Rfunction{extractFeatures}
+writes features in the local directory, in tab-separated format.
+In the following example, we extract cell features from the well indicated by
+\Rfunction{uname}, using the feature parameter file shown in section~\ref{sec:conf}.
+
+<<extractFeatures>>=
+extractFeatures(x, uname, 'conf/featurepar.txt')
+@ 
+
+Cell features can be accessed using the function \Rfunction{fileHTS}, as described
+above. However, for convenience purposes, the function \Rfunction{readHTS} combines
+\Rfunction{fileHTS} and reads the corresponding file, according to the specified format
+(here, tab-separated). The following example reads the cell feature matrix of
+well '001-02-C03'.
+
+<<readFeatures>>=
+y = readHTS(x, type='ftrs', uname=uname, format='tab')
+dim(y)
+y[1:10, 1:7]
+@ 
+
+84 cells are present in the well and each cell is described with 180 features.
+Cell features include geometrical features, moment-based features, Haralick moments and 
+Zernicke features. Cell features are described in the manual pages of the function
+\Rfunction{getFeatures} of the package EBImage. Some features have a direct
+interpretation, such as \Robject{c.g.s}, which measures the cell area or
+\Robject{c.t.m.int}, which quantifies the cell tubulin intensity. In the
+following example, we display the distribution of the latter within 
+the cells of the well, and identify the cells that have a tubulin 
+intensity higher than 1600.
+
+<<histfig, fig=TRUE, height=5>>=
+hist(y$c.t.m.int, 20, xlab='Cell tubulin intensity (a.u.)', main='')
+abline(v=1600, col=2)
+cellid = which(y$c.t.m.int>1600)
+print(cellid)
+@
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{imageHTS-introduction-histfig}
+\end{center}
+\caption{Distribution of cell tubulin intensity \Robject{c.t.m.int} in cells of well '001-02-C03'.}
+\label{fig:histfig}
+\end{figure}
+
+Five cells have a tubulin content higher than 1600. Since rows of
+cell feature matrix are synchronised with cell indexes in segmentation masks, 
+cells can be easily traced back by loading the segmentation information,
+as shown in the following example.
+
+<<traceCell>>=
+cal = readHTS(x, type='cal', uname=uname, format='rda')
+seg = readHTS(x, type='seg', uname=uname, format='rda')
+cseg = rmObjects(seg$cseg, setdiff(1:nrow(y), cellid))
+hightub = highlightSegmentation(0.6*cal, cseg=cseg, thick=TRUE)
+display(hightub)
+@ 
+<<traceCellh, echo=FALSE>>= 
+writeImage(hightub, 'hightub.jpeg', quality=80)
+@
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.9\textwidth]{hightub.jpeg}
+\caption{Cells of well '001-02-C03' having a tubulin intensity \Robject{c.t.m.int} higher than 1600.}
+\end{center}
+\end{figure}
+
+\subsection{Prediction of cell classes}
+
+Cell features can be used as covariates to classify cells, using
+supervised learning and a set of manually annotated cells. The function 
+\Rfunction{readLearnTS} takes as arguments a training set file and the feature
+parameter file, previously used in \Rfunction{extractFeatures}. The training
+set is a list of labelled cells and the feature parameter file contains the
+field \Robject{remove.classification.features}, indicating the features that
+should not be used during training/classification (e.g. cell position).
+Construction of the training set is done using the annotation web module 
+cellPicker as described in the section \ref{sec:cellpicker}.
+
+The function \Rfunction{readLearnTS} uses a Support Vector Machine
+with a radial kernel to predict cell labels. Training is done by parameter
+grid-search and 5-fold cross-validation, to minimize classification error. The
+function creates the file \Robject{data/classifier.rda}, which contains the
+trained classifier. The following example trains a cell classifier, but is
+not run in the vignette due to time constraints.
+
+<<readLearnTS, eval=FALSE>>=
+readLearnTS(x, 'conf/featurepar.txt', 'conf/trainingset.txt')
+@ 
+
+After training, prediction of cell labels is done by the function
+\Rfunction{predictCellLabels}. The function writes for each well
+a vector of predicted cell labels. The following example predicts
+the cell labels of the well '01-02-C03', using a classifier
+previously trained on a set of 184 cells labelled with 3
+cell classes: I (interphase), M (mitotic) and D (debris).
+
+<<predictCellLabels>>=
+predictCellLabels(x, uname)
+@ 
+
+66 interphase, 9 mitotic and 9 debris cells were predicted in the image.
+The following example retrieves and displays the predicted cell labels.
+
+<<drawCellLabels>>=
+clab = readHTS(x, type='clabels', uname=uname, format='tab')
+labid = split(1:nrow(clab), clab$label)
+inter = seg$cseg%in%labid$I
+mito = seg$cseg%in%labid$M
+debris = seg$cseg%in%labid$D
+dc = Image(c(inter+mito, inter, debris+inter), colormode='Color', dim=c(dim(seg$cseg)[1:2], 3))
+dc = highlightSegmentation(0.5*dc+0.2*drop(cal), cseg=seg$cseg, thick=TRUE)
+display(dc)
+@ 
+<<drawCellLabelsh, echo=FALSE>>= 
+writeImage(dc, 'dc.jpeg', quality=80)
+@
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.9\textwidth]{dc.jpeg}
+\caption{Predicted cell labels (grey: interphase, red: mitotic, blue: debris) in well '001-02-C03'.}
+\end{center}
+\end{figure}
+
+Overall prediction is very good, except for few cells. Classification performance
+can be easily improved by enlarging the training set and re-run the training and
+predicting steps. The cellPicker web module, described in section~\ref{sec:cellpicker},
+has an interactive cell annotation interface which is very useful to refine the
+training set.
+
+\subsection{Phenotype summarization}
+
+Cell population features are summarized by \Rfunction{summarizeWells}. The
+function computes for each well a phenotypic profile, which summarizes
+cell population features. Currently, a phenotypic profile consist of:
+cell number \Robject{n}, median cell feature \Robject{med.*} (for each feature)
+and cell class ratios.
+\Rfunction{summarizeWells} creates the file \Robject{data/profiles.tab} which
+contains the phenotypic profiles. The following example computes the phenotypic
+profiles of all the wells, but is not run in the vignette due to time constraints.
+
+<<summarizeWells, eval=FALSE>>= 
+summarizeWells(x, unames, 'conf/featurepar.txt')
+@
+
+In the following example, the phenotypic profiles (previously computed and stored in the imageHTS
+package) are loaded with \Rfunction{readHTS} and averaged by well type. Only the following
+features are considered: n (cell number), med.c.g.s (median cell size), med.c.t.m.int (median cell tubulin
+intensity), M (mitotic cell fraction) and D (debris cell fraction).
+
+<<sum>>=
+profiles = readHTS(x, type='file', filename='data/profiles.tab', format='tab')
+wfcontent = factor(as.character(getWellFeatures(x, unames)$controlStatus))
+table(wfcontent)
+zwf = split(1:nrow(profiles), wfcontent)
+ft = c('n', 'med.c.g.s', 'med.c.t.m.int', 'M', 'D')
+avef = do.call(rbind, lapply(zwf, function(z) colMeans(profiles[z, ft])))
+print(avef)
+@ 
+
+There are 4 \Robject{rluc} negative controls, 4 \Robject{ubc} positive controls
+and 4 \Robject{sample} wells in this screen. The average number of cells in
+\Robject{ubc} wells is 23.75, lower than in \Robject{rluc} wells, 90.50. 
+Moreover, the average fraction of debris cells in \Robject{ubc} wells, 0.59, 
+is higher than in \Robject{rluc} wells, 0.04. A larger number of replicates and
+proper statistical testing would be needed to determine whether the observed
+changes are statistically significant.
+
+\subsection{Configuration files and complete script}
+\label{sec:conf}
+
+Configurations files used in this vignette are reproduced in this section.
+Since the files are part of the screen data, they can be read using 
+\Rfunction{fileHTS}. In the following example, we display the imageHTS configuration file,
+the segmentation parameter file and the feature parameter file.
+
+<<imageconf>>=
+f = fileHTS(x, 'file', filename='conf/imageconf.txt')
+cat(paste(readLines(f), collapse='\n'), '\n')
+@ 
+
+<<segmentationpar>>=
+f = fileHTS(x, 'file', filename='conf/segmentationpar.txt')
+cat(paste(readLines(f), collapse='\n'), '\n')
+@ 
+
+<<featurepar>>=
+f = fileHTS(x, 'file', filename='conf/featurepar.txt')
+cat(paste(readLines(f), collapse='\n'), '\n')
+@ 
+
+The following example is the complete script used to automatically segment cells, quantify 
+cell features, predict cell labels and summarize phenotypes of the whole screen.
+The example is not run in this vignette, due to time constraints.
+
+<<script, eval=FALSE>>=
+library('imageHTS')
+localPath = tempdir()
+serverURL = system.file('submorph', package='imageHTS')
+x = parseImageConf('conf/imageconf.txt', localPath=localPath, serverURL=serverURL)
+x = configure(x, 'conf/description.txt', 'conf/plateconf.txt', 'conf/screenlog.txt')
+x = annotate(x, 'conf/annotation.txt')
+unames = setdiff(getUnames(x), getUnames(x, content='empty'))
+segmentWells(x, unames, 'conf/segmentationpar.txt')
+extractFeatures(x, unames, 'conf/featurepar.txt')
+readLearnTS(x, 'conf/featurepar.txt', 'conf/trainingset.txt')
+predictCellLabels(x, unames)
+summarizeWells(x, unames, 'conf/featurepar.txt')
+@
+
+\section{Getting access to remote screen data}
+\label{sec:kimorph}
+
+The dual repository architecture of imageHTS allows an easy access to remote screen data.
+In the following, we are analysing the full \Robject{kimorph} RNAi screen, targeting
+about 800 protein coding genes in HeLa cells. Screen details are available in \cite{pmid20531400}.
+The screen has been previously analysed by imageHTS and screen data is located at
+\url{http://www.ebi.ac.uk/~gpau/imageHTS/screens/kimorph}. The interactive webQuery browsing
+interface is available at \url{http://www.ebi.ac.uk/~gpau/imageHTS/screens/kimorph/webquery}.
+
+\subsection{Initialization}
+
+We first initialize an imageHTS object by setting the variable \Robject{serverURL}
+to the screen data URL and the local repository \Robject{localPath} to an empty
+local directory. We next configure and annotate the imageHTS objects using the
+screen configuration files. The files, absent in the local screen directory, are
+automatically downloaded from the remote server.
+
+<<init, results=hide>>=
+localPath = file.path(tempdir(), 'kimorph')
+serverURL = 'http://www.ebi.ac.uk/~gpau/imageHTS/screens/kimorph'
+x = parseImageConf('conf/imageconf.txt', localPath=localPath, serverURL=serverURL)
+x = configure(x, 'conf/description.txt', 'conf/plateconf.txt', 'conf/screenlog.txt')
+x = annotate(x, 'conf/annotation.txt')
+@
+
+\subsection{Inspecting data}
+\label{sec:cellpicker}
+
+We enumerate the non-empty wells with \Rfunction{getUnames} and
+retrieve metadata about them using \Rfunction{getWellFeatures}. The
+\Robject{controlStatus} field contains the well type. We then load
+the well phenotypic profiles using \Rfunction{readHTS} in the variable
+\Robject{xd}.
+
+<<get>>=
+us = setdiff(getUnames(x), getUnames(x, content='empty'))
+wfcontent = getWellFeatures(x, us)$controlStatus
+table(wfcontent)
+xd = readHTS(x, 'file', filename='data/profiles.tab', format='tab')
+xd = xd[match(us, xd$uname),]
+@ 
+
+There are 1750 non-empty wells in this screen, including 1558 sample experiments and
+8 controls, each replicated 24 times. In the following example, we show how the
+median cell size \Robject{med.c.g.ss} and median cell eccentricity \Robject{med.c.g.ec}
+vary within well types.
+
+<<boxplots, fig=TRUE, width=14, height=7>>=
+colors = c('#ffffff', NA, '#aaffff', '#ffaaff', '#ff44aa',  '#aaaaff',  '#aaffaa', 
+  '#ff7777', '#aaaaaa', '#ffff77')
+par(mfrow=c(1,2))
+boxplot(xd$med.c.g.ss~wfcontent, las=2, col=colors, main='Median cell size (a.u.)')
+boxplot(xd$med.c.g.ec~wfcontent, las=2, col=colors, main='Median cell eccentricity (a.u.)')
+@
+\begin{figure}[!h]
+\begin{center}
+\includegraphics{imageHTS-introduction-boxplots}
+\end{center}
+\caption{Distribution of median cell size and median cell eccentricity among well types.}
+\label{fig:boxplots}
+\end{figure}
+
+The boxplots show that the \Robject{ubc} control phenotype is characterized
+by small and round cells, the \Robject{clspn} control phenotype is characterized
+by large cells and the \Robject{trappc3} control phenotype is characterized
+by elongated cells. 
+
+To have a screen-wide overview of the well phenotypes, we draw in the following example
+a map of the phenotypic profiles using linear discriminant analysis (LDA),
+computed on the on the controls \Robject{rluc}, \Robject{ubc} and \Robject{trappc3}.
+
+<<lda1, fig=TRUE>>=
+library(MASS)
+z = wfcontent %in% c('rluc', 'ubc', 'trappc3')
+ft = 14:50
+ld = lda(xd[z, ft], as.character(wfcontent[z]))
+py = predict(ld, xd[, ft])
+plot(py$x[,1:2])
+@ 
+
+%\begin{figure}[!h]
+%\begin{center}
+%\includegraphics[width=0.45\textwidth]{imageHTS-introduction-lda1}
+%\end{center}
+%\caption{LDA projection of the phenotypic profiles, computed on the
+%  control \Robject{rluc}, \Robject{ubc} and \Robject{trappc3} wells.}
+%\label{fig:lda}
+%\end{figure}
+
+Two wells stand far away from the other ones. Are they novel phenotypes ?
+We identify and display them in the following example.
+
+<<standout>>=
+unames = us[which(py$x[,1]>500)]
+print(unames)
+f = fileHTS(x, type='viewunmonted', spot=3, uname=unames[1])
+img1 = readImage(f)[1791:2238,1:448,]
+display(img1)
+f = fileHTS(x, type='viewunmonted', spot=1, uname=unames[2])
+img2 = readImage(f)[1:448,1:448,]
+display(img2)
+@
+<<standouth,echo=FALSE>>= 
+writeImage(img1, 'img1.jpeg', quality=80)
+writeImage(img2, 'img2.jpeg', quality=80)
+@
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.45\textwidth]{img1.jpeg}
+\includegraphics[width=0.45\textwidth]{img2.jpeg}
+\caption{Well '001-01-A13' and '002-01-I13' showing staining problems.}
+\end{center}
+\end{figure}
+
+Wells '001-01-A13' and '002-01-I13' have serious staining problems. This is 
+an example how a phenotypic map can be used for quality control. The wells
+cannot be used in the analysis and can be flagged in the screen log
+configuration file. The LDA plot is now redrawn by adjusting plot limits.
+
+<<lda2, fig=TRUE>>=
+plot(py$x[,1:2], xlim=c(-35,25), ylim=c(-20,20), cex=0.3)
+z = wfcontent!='sample'
+points(py$x[z,1:2], col=1, bg=colors[wfcontent[z]], pch=21)
+col = rep(1, length(levels(wfcontent)))
+col[2] = NA
+legend('topleft', legend=levels(wfcontent), col=col, pt.bg=colors[1:length(wfcontent)],
+       pch=21, ncol=2, cex=0.8) 
+@
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics{imageHTS-introduction-lda2}
+\end{center}
+\caption{LDA projection of the phenotypic profiles, computed on the
+  control \Robject{rluc}, \Robject{ubc} and \Robject{trappc3} wells.}
+\label{fig:lda}
+\end{figure}
+
+Control wells \Robject{ubc}, \Robject{clspn}, \Robject{rluc} and \Robject{trappc3} are
+well separated from each other. Control wells \Robject{plk1} seem to display 
+similar phenotypes than the negative control \Robject{rluc}: further inspection
+will reveal than the siRNA reagent against \Robject{plk1} did not work in this
+experiment.
+
+Several sample wells seem to have strong phenotypes, distant from negative
+controls. Further data inspection is facilitated by the
+webQuery and cellPicker web modules, which allow interactive browsing and cell
+selection/annotation using a web browser. In the following example, the
+functions \Rfunction{popWebQuery} and \Rfunction{popCellPicker} open
+the corresponding modules. See Fig.~\ref{fig:web} for an overview of the webQuery
+and cellPicker web modules.
+
+<<popCellPicker, eval=FALSE>>=
+popWebQuery(x)
+uname = getUnames(x, content='trappc3')[1]
+popCellPicker(x, uname)
+@ 
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{webquery.jpeg}\\
+\includegraphics[width=0.8\textwidth]{cellpicker.jpeg}
+\end{center}
+\caption{The webQuery (top) and cellPicker (bottom) web modules.}
+\label{fig:web}
+\end{figure}
+
+\section{Session info}
+
+This document was produced using:
+
+<<sessionInfo, results=tex, print=TRUE>>=
+toLatex(sessionInfo())
+@ 
+
+\bibliography{imageHTS}
+\bibliographystyle{plain}
+
+\end{document}
+
+

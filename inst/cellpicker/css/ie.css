@@ -1,0 +1,17 @@
+
+table.style {
+	border: 1px solid #6495ed;
+}
+
+table.style td{
+	width: 100px;	
+	border-bottom: 1px solid #6495ed;
+	border-top: 1px solid #6495ed;
+}
+
+table.style th{	
+	width: 100px;	
+	border-bottom: 1px solid #6495ed;
+	border-top: 1px solid #6495ed;
+}
+

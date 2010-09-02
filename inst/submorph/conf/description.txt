@@ -1,0 +1,34 @@
+[Lab description]
+Experimenter name: Florian Fuchs
+Laboratory: DKFZ, EMBL/EBI
+Contact information:
+
+[Screen description]
+Screen: morpho
+Title: Kinase RNAi screen of cell morphology in HeLa cells
+Version: 
+Date: 
+Screentype: RNA interference
+Organism: Homo sapiens
+Celltype: HeLa
+Library: Dharmacon
+Assay: Cell morphological features from immunofluorescence microscopy
+Assaytype: homogenous
+Assaydescription:  Cells were treated with 21306 siRNAs for 48 hours in 384-well plates
+
+[Publication description]
+Publicationtitle: 
+Reference: 
+PMIDs: 
+URL:
+License: 
+Abstract:
+
+[Files]
+platelist: NA
+annotation: NA
+plateconf: plateconf.txt
+screenlog: screenlog.txt
+
+
+
