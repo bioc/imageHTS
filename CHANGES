@@ -1,3 +1,6 @@
+0.99.2
+- reverted to the wget method, since download.file() does not download files from the EBI servers (error is "Access denied due to security policy violation")
+
 0.99.1
 - now using download.file default method (not wget)
 - Bioconductor build: fixed a path-related bug preventing build on Windows

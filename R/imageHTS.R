@@ -220,7 +220,12 @@ fileHTS = function(x, type, ..., createPath=FALSE, access='cache') {
       ## download if the file doesn't exist locally or if access = 'download'
       if (!file.exists(flocal)) {
         fserver =  fileHTS(x, type, ..., access='server')
-        z = try(suppressWarnings(download.file(fserver, flocal, mode='wb')), silent=TRUE)
+        ## wget does not support file://
+        if (regexpr('file://', fserver)==1) {
+          fserver = substr(fserver, 8, nchar(fserver))
+          z = try(file.copy(fserver, flocal, overwrite=TRUE), silent=TRUE)
+        }
+        else z = try(suppressWarnings(download.file(fserver, paste('\'', flocal, '\'', sep=''), mode='wb', method='wget')), silent=TRUE)
         if (class(z)=='try-error') unlink(flocal)
       }
     }
