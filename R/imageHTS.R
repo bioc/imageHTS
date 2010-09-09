@@ -220,13 +220,14 @@ fileHTS = function(x, type, ..., createPath=FALSE, access='cache') {
       ## download if the file doesn't exist locally or if access = 'download'
       if (!file.exists(flocal)) {
         fserver =  fileHTS(x, type, ..., access='server')
-        ## wget does not support file://
-        if (regexpr('file://', fserver)==1) {
-          fserver = substr(fserver, 8, nchar(fserver))
-          z = try(file.copy(fserver, flocal, overwrite=TRUE), silent=TRUE)
+
+        z = try(suppressWarnings(download.file(URLencode(fserver), flocal, mode='wb')), silent=TRUE)
+        
+        if (class(z)=='try-error' || z!=0) {
+          warning(paste('cannot download the file pointed by \"', fserver, '\" to the location \"', flocal,
+                        '\"', sep=''))
+          unlink(flocal)
         }
-        else z = try(suppressWarnings(download.file(fserver, paste('\'', flocal, '\'', sep=''), mode='wb', method='wget')), silent=TRUE)
-        if (class(z)=='try-error') unlink(flocal)
       }
     }
     access = 'local'
@@ -373,7 +374,6 @@ getImageConf = function(x) {
 }
 
 resync = function() {
-  setwd('imageHTS')
   library('imageHTS')
   source('R/imageHTS.R')
   source('R/configure.R')
@@ -386,7 +386,6 @@ resync = function() {
   source('R/classification.R')
   source('R/webQuery.R')
   source('R/quality.R')
-  setwd('..')
 }
 
 msg = function(...) {
