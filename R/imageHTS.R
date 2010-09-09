@@ -224,12 +224,13 @@ fileHTS = function(x, type, ..., createPath=FALSE, access='cache') {
         ## special case for local files
         if (regexpr('file://', fserver)==1) {
           w = substr(fserver, 8, nchar(fserver))
-          z = try(suppressWarnings(file.copy(w, flocal, overwrite=TRUE)), silent=TRUE)
+          ok = try(suppressWarnings(file.copy(w, flocal, overwrite=TRUE)), silent=TRUE)
         } else {
-          z = try(suppressWarnings(download.file(URLencode(fserver), flocal, mode='wb')), silent=TRUE)
+          ok = try(suppressWarnings(download.file(URLencode(fserver), flocal, mode='wb')), silent=TRUE)
+          ok = (ok==0)
         }
         
-        if (class(z)=='try-error' || z!=0) {
+        if (class(ok)=='try-error' || !ok) {
           warning(paste('cannot download the file pointed by \"', fserver, '\" to the location \"', flocal, '\"', sep=''))
           unlink(flocal)
         }
