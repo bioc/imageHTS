@@ -1,0 +1,11 @@
+- doc: makeCellHTS
+- fix: makeCellHTS + labels in order
+- implement: netCDF
+- popCellPicker: id TODO
+- collectCellFeatures: spot TODO
+- annotate must follow the format uname
+- fix: displayHTS      
+- doc: displayHTS 
+- status: kimorph: different seg, no TS
+- status: kimorpho, before: NA in features, NA->0 during classification, NA=>omit during summarize
+- status: kimorpho, now: NA->0 during extractFeatures

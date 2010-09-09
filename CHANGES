@@ -1,0 +1,17 @@
+0.99
+- new version number, asked by the Bioconductor reviewer
+
+1.8.0
+- initial release
+
+1.6.3
+- documentation
+
+1.6.2
+- source/ has to be present in SourceFilenamePattern field in imageconf.txt
+- featurepar.txt instead of summarypar.txt
+- cell.classes field in featurepar.txt
+- features are now stored as (spot, id) instead of list(list())
+- spot instead of mont
+- no rownames in collectCellFeatures and makeCellHTS anymore but a column uname
+- no more url in fileHTS
