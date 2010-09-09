@@ -1,3 +1,6 @@
+0.99.3
+- now works on Windows and Linux systems
+
 0.99.2
 - reverted to the wget method, since download.file() does not download files from the EBI servers (error is "Access denied due to security policy violation")
 
