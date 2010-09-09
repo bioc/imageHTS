@@ -1,3 +1,8 @@
+0.99.1
+- now using download.file default method (not wget)
+- Bioconductor build: fixed a path-related bug preventing build on Windows
+- Bioconductor build: now flagged as "unsupported" on win64 and mac
+
 0.99
 - new version number, asked by the Bioconductor reviewer
 
