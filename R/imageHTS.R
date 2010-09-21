@@ -231,7 +231,7 @@ fileHTS = function(x, type, ..., createPath=FALSE, access='cache') {
           if (ok==0) ok = TRUE
         }
         
-        if (class(ok)=='try-error' || !ok) {
+        if (class(ok)=='try-error' || !ok || file.info(flocal)$size==0) {
           warning(paste('cannot download the file pointed by \"', fserver, '\" to the location \"', flocal, '\"', sep=''))
           unlink(flocal)
         }
