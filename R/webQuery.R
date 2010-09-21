@@ -36,7 +36,7 @@ installWebQuery = function(x) {
   write(conf, file=fconf)
 }
 
-writeThumbnail = function(x, uname, input.image, p, output.filename, access='cache') {
+writeThumbnail = function(x, uname, p, input.image, output.filename, access='cache') {
   if (missing(input.image)) input.image = try(readImage(fileHTS(x, 'viewfull', uname=uname, access=access)), silent=TRUE)
   if (missing(output.filename)) output.filename = fileHTS(x, 'viewthumb', uname=uname, createPath=TRUE, access='local')
   
