@@ -36,11 +36,11 @@ installWebQuery = function(x) {
   write(conf, file=fconf)
 }
 
-writeThumbnail = function(x, uname, viewfull, p, access='cache') {
-  if (missing(viewfull)) {
-    viewfull = try(readImage(fileHTS(x, 'viewfull', uname=uname, access=access)), silent=TRUE)
-  }
-  if (class(viewfull)=='try-error' || length(viewfull)==0) return(FALSE)
+writeThumbnail = function(x, uname, input.image, p, output.filename, access='cache') {
+  if (missing(input.image)) input.image = try(readImage(fileHTS(x, 'viewfull', uname=uname, access=access)), silent=TRUE)
+  if (missing(output.filename)) output.filename = fileHTS(x, 'viewthumb', uname=uname, createPath=TRUE, access='local')
+  
+  if (class(input.image)=='try-error' || length(input.image)==0) return(FALSE)
   else {
     if (is.null(p$thumbnail.crop)) stop('\'thumbnail.crop\' parameter is missing')
     if (is.null(p$thumbnail.resize.width)) stop('\'thumbnail.resize.width\' parameter is missing')
@@ -48,12 +48,11 @@ writeThumbnail = function(x, uname, viewfull, p, access='cache') {
     p$thumbnail.crop = as.numeric(p$thumbnail.crop)
     p$thumbnail.resize.width = as.numeric(p$thumbnail.resize.width)
 
-    thumb = viewfull[p$thumbnail.crop[1]:p$thumbnail.crop[2],
+    thumb = input.image[p$thumbnail.crop[1]:p$thumbnail.crop[2],
       p$thumbnail.crop[3]:p$thumbnail.crop[4],]
     thumb = resize(thumb, w=p$thumbnail.resize.width)
     
-    ff = fileHTS(x, 'viewthumb', uname=uname, createPath=TRUE, access='local')
-    writeImage(thumb, ff, quality=95)
+    writeImage(thumb, output.filename, quality=95)
     return(TRUE)
   }
 }

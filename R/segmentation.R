@@ -51,7 +51,7 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     writeImage(tile(highlightSegmentation(cal, nseg, cseg), montage), ff, quality=95)
     
     ## write calibrated, thumbnail images for webQuery
-    writeThumbnail(x, uname=uname, viewfull=viewfull, p=p)
+    writeThumbnail(x, uname=uname, input.image=viewfull, p=p)
     
     ## write contours for cellPicker
     writeContours(x, uname, access=access)
