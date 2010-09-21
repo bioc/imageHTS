@@ -48,8 +48,8 @@ writeThumbnail = function(x, uname, viewfull, p, access='cache') {
     p$thumbnail.crop = as.numeric(p$thumbnail.crop)
     p$thumbnail.resize.width = as.numeric(p$thumbnail.resize.width)
 
-    thumb = viewfull[p$thumbnail.crop[2]+(0:p$thumbnail.crop[3]),
-      p$thumbnail.crop[1]+(0:p$thumbnail.crop[4]),]
+    thumb = viewfull[p$thumbnail.crop[1]:p$thumbnail.crop[2],
+      p$thumbnail.crop[3]:p$thumbnail.crop[4],]
     thumb = resize(thumb, w=p$thumbnail.resize.width)
     
     ff = fileHTS(x, 'viewthumb', uname=uname, createPath=TRUE, access='local')

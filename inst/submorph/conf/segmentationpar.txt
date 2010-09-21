@@ -24,5 +24,5 @@ cell.min.size: 150.0625
 cell.max.size: 14491.75
 cell.max.perimeter: 769.3
 
-thumbnail.crop: 200, 100, 500, 200
+thumbnail.crop: 100, 600, 200, 400
 thumbnail.resize.width: 200
