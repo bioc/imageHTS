@@ -227,7 +227,8 @@ fileHTS = function(x, type, ..., createPath=FALSE, access='cache') {
           ok = try(suppressWarnings(file.copy(w, flocal, overwrite=TRUE)), silent=TRUE)
         } else {
           ok = try(suppressWarnings(download.file(URLencode(fserver), flocal, mode='wb')), silent=TRUE)
-          ok = (ok==0)
+          ## download.file returns 0 for success
+          if (ok==0) ok = TRUE
         }
         
         if (class(ok)=='try-error' || !ok) {
