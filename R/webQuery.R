@@ -48,8 +48,8 @@ writeThumbnail = function(x, uname, p, input.image, output.filename, access='cac
     p$thumbnail.crop = as.numeric(p$thumbnail.crop)
     p$thumbnail.resize.width = as.numeric(p$thumbnail.resize.width)
 
-    thumb = input.image[p$thumbnail.crop[1]:p$thumbnail.crop[2],
-      p$thumbnail.crop[3]:p$thumbnail.crop[4],]
+    if (length(dim(input.image))==3) thumb = input.image[p$thumbnail.crop[1]:p$thumbnail.crop[2], p$thumbnail.crop[3]:p$thumbnail.crop[4],]
+    else thumb = input.image[p$thumbnail.crop[1]:p$thumbnail.crop[2], p$thumbnail.crop[3]:p$thumbnail.crop[4]]
     thumb = resize(thumb, w=p$thumbnail.resize.width)
     
     writeImage(thumb, output.filename, quality=95)
