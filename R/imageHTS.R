@@ -141,6 +141,12 @@ fileHTS = function(x, type, ..., createPath=FALSE, access='cache') {
            filename = gsub('\\{row\\}', row, filename)
            filename = gsub('\\{col\\}', col, filename)
            filename = gsub('\\{channel\\}', channel, filename)
+
+           ## spot
+           if (length(grep('\\{spot\\}', filename))==1) {
+             if (!'spot'%in%nargs) stop("fileHTS: argument 'spot' is missing")
+             filename = gsub('\\{spot\\}', ic$SpotNames[spot], filename)
+           }
            
            dir = ''
          },

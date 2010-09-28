@@ -1,3 +1,7 @@
+0.99.6
+- now supports SpotNames and {spot} in SourceFilenamePattern, in imageHTS configuration file
+- tile margins in black
+
 0.99.5
 - highlightSegmentation now highlights with opaque borders
 

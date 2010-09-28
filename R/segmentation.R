@@ -43,12 +43,12 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     
     ## write calibrated, monted images
     ff = fileHTS(x, 'viewfull', uname=uname, createPath=TRUE, access='local')
-    viewfull = tile(cal, montage)
+    viewfull = tile(cal, montage, fg.col='black', bg.col='black')
     writeImage(viewfull, ff, quality=95)
     
     ## write calibrated images with segmentation information
     ff = fileHTS(x, 'viewseg', uname=uname, createPath=TRUE, access='local')
-    writeImage(tile(highlightSegmentation(cal, nseg, cseg), montage), ff, quality=95)
+    writeImage(tile(highlightSegmentation(cal, nseg, cseg), montage, fg.col='black', bg.col='black'), ff, quality=95)
     
     ## write calibrated, thumbnail images for webQuery
     writeThumbnail(x, uname=uname, p=p, input.image=viewfull)
