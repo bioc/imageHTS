@@ -66,9 +66,17 @@ countObjects = function(cseg) {
   else max(cseg)
 }
 
+paintObjectsOpaque = function(seg, cal, ...) {
+  bcal = Image(0, dim=dim(cal), colormode=colorMode(cal))
+  bcal = paintObjects(seg, bcal, col='white')
+  cal[as.logical(bcal)] = 0
+  paintObjects(seg, cal, ...)
+}
+
 highlightSegmentation = function(cal, nseg=NULL, cseg=NULL, thick=FALSE) {
   if (thick) {
     if (!is.null(nseg)) {
+      if (colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
       w = nseg!=translate(nseg, c(0,1)) | nseg!=translate(nseg, c(1,0)) | nseg!=translate(nseg, c(0,-1)) | nseg!=translate(nseg, c(-1,0))
       w = w==1
       cal[rep(w, 3)] = c(rep(1, sum(w)*2), rep(0, sum(w)))
@@ -81,9 +89,9 @@ highlightSegmentation = function(cal, nseg=NULL, cseg=NULL, thick=FALSE) {
     }
     cal
   } else {
-    if (!is.null(nseg)) seg = paintObjects(nseg, cal, col=c('#ffff00'))
-    else seg = cal
-    if (!is.null(cseg)) seg = paintObjects(cseg, seg, col=c('#ff00ff'))
-    seg
+    if (!is.null(nseg)) hseg = paintObjectsOpaque(nseg, cal, col=c('#ffff00'))
+    else hseg = cal
+    if (!is.null(cseg)) hseg = paintObjectsOpaque(cseg, hseg, col=c('#ff00ff'))
+    hseg
   }
 }

@@ -1,5 +1,5 @@
 Package: imageHTS
-Version: 0.99.4
+Version: 0.99.5
 Title: Analysis of high-throughput microscopy-based screens
 Author: Gregoire Pau, Xian Zhang, Michael Boutros, Wolfgang Huber
 Maintainer: Gregoire Pau <gregoire.pau@embl.de>
