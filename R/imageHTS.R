@@ -131,17 +131,24 @@ fileHTS = function(x, type, ..., createPath=FALSE, access='cache') {
            ic = getImageConf(x)
            plate = ic$PlateNames[plate]
            replicate = ic$ReplicateNames[replicate]
-           row = ic$RowNames[row]
-           col = ic$ColNames[col]
            channel = ic$ChannelNames[channel]
            
            filename = ic$SourceFilenamePattern
            filename = gsub('\\{plate\\}', plate, filename)
            filename = gsub('\\{replicate\\}', replicate, filename)
-           filename = gsub('\\{row\\}', row, filename)
-           filename = gsub('\\{col\\}', col, filename)
            filename = gsub('\\{channel\\}', channel, filename)
-
+           
+           ## wellid
+           if (length(grep('\\{wellid\\}', filename))==1) {
+             wellid = well2wellid(row=row, col=col, direction=ic$WellIdDirection, dim=pdim(x))
+             filename = gsub('\\{wellid\\}', wellid, filename)
+           } else {
+             row = ic$RowNames[row]
+             col = ic$ColNames[col]
+             filename = gsub('\\{row\\}', row, filename)
+             filename = gsub('\\{col\\}', col, filename)
+           }
+           
            ## spot
            if (length(grep('\\{spot\\}', filename))==1) {
              if (!'spot'%in%nargs) stop("fileHTS: argument 'spot' is missing")
@@ -293,6 +300,15 @@ rowcol2well = function(row, col) {
 well2rowcol = function(well) {
   data.frame(row=as.numeric(sapply(substr(well, 1, 1), charToRaw))-64,
        col=as.numeric(substr(well, 2, 3)))
+}
+
+well2wellid = function(row, col, direction, dim) {
+  direction = tolower(direction)
+  if (direction=='row') byrow=TRUE
+  else if (direction=='col') byrow=FALSE
+  else stop("direction must be either 'row' or 'col'")
+  if (byrow) 1 + (col-1) + (row-1)*dim[2]
+  else 1 + (row-1) + (col-1)*dim[1]
 }
 
 getUnames = function(x, plate, replicate, row, col, content) {

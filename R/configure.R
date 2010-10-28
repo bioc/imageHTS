@@ -31,7 +31,7 @@ parseImageConf = function(filename, localPath='myscreen', serverURL, access='cac
   nic = sapply(ic,length)
   nbPlates = nic['PlateNames']
   nbReplicates = nic['ReplicateNames']
-  nbRows =nic['RowNames']
+  nbRows = nic['RowNames']
   nbCols = nic['ColNames']
   nbWells = nbRows*nbCols
   nbChannels = nic['ChannelNames']
