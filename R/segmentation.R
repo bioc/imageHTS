@@ -29,6 +29,8 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
   write.seg = TRUE
   write.seg.view = FALSE
   write.seg.view.tiled = TRUE
+  write.thumbnail = TRUE
+  write.contours = TRUE
 
   ## update writing data scheme
   if (!is.null(p$seg.write.cal)) write.cal = as.logical(p$seg.write.cal)
@@ -37,6 +39,8 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
   if (!is.null(p$seg.write.seg)) write.seg = as.logical(p$seg.write.seg)
   if (!is.null(p$seg.write.seg.view)) write.seg.view = as.logical(p$seg.write.seg.view)
   if (!is.null(p$seg.write.seg.view.tiled)) write.seg.view.tiled = as.logical(p$seg.write.seg.view.tiled)
+  if (!is.null(p$seg.write.thumbnail)) write.thumbnail = as.logical(p$seg.write.thumbnail)
+  if (!is.null(p$seg.write.contours)) write.contours = as.logical(p$seg.write.contours)
 
   if (writeData) {
     ## save calibrated data
@@ -92,12 +96,16 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     }
     
     ## write calibrated, thumbnail images for webQuery
-    if (length(dim(cal))==3) aspot = cal
-    else aspot = cal[,,,1]
-    writeThumbnail(x, uname=uname, p=p, input.image=aspot)
+    if (write.thumbnail) {
+      if (length(dim(cal))==3) aspot = cal
+      else aspot = cal[,,,1]
+      writeThumbnail(x, uname=uname, p=p, input.image=aspot)
+    }
     
     ## write contours for cellPicker
-    writeContours(x, uname, access=access)
+    if (write.contours) {
+      writeContours(x, uname, access=access)
+    }
   }
     
   cat(' OK\n')
