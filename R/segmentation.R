@@ -46,15 +46,15 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     ## save calibrated data
     if (write.cal) {
       ff = fileHTS(x, 'cal', uname=uname, createPath=TRUE, access='local')
-      save(cal, file=ff, compress=TRUE)
+      save(z$cal, file=ff, compress=TRUE)
     }
 
     ## write calibrated images
     if (write.cal.view) {
       nbimages = getNumberOfFrames(cal, 'render')
       for (spot in 1:nbimages) {
-        if (length(dim(cal))==3) aspot = cal
-        else aspot = cal[,,,spot]
+        if (length(dim(cal))==3) aspot = z$cal
+        else aspot = z$cal[,,,spot]
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
         writeImage(aspot, file=ff, quality=95)
       }
@@ -63,19 +63,19 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     ## write calibrated images, tiled
     if (write.cal.view.tiled) {
       ff = fileHTS(x, 'viewfull', uname=uname, createPath=TRUE, access='local')
-      viewfull = tile(cal, montage, fg.col='black', bg.col='black')
+      viewfull = tile(z$cal, montage, fg.col='black', bg.col='black')
       writeImage(viewfull, ff, quality=95)
     }
     
     ## save segmentation data
     if (write.seg) {
       ff = fileHTS(x, 'seg', uname=uname, createPath=TRUE, access='local')
-      seg = list(nseg=nseg, cseg=cseg)
+      seg = list(nseg=z$nseg, cseg=z$cseg)
       save(seg, file=ff, compress=TRUE)
     }
     
     ## prepare hseg
-    if (write.seg.view || write.seg.view.tiled) hseg = highlightSegmentation(cal, nseg, cseg)
+    if (write.seg.view || write.seg.view.tiled) hseg = highlightSegmentation(z$cal, z$nseg, z$cseg)
     
     ## write calibrated images with segmentation information
     if (write.seg.view) {
@@ -97,8 +97,8 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     
     ## write calibrated, thumbnail images for webQuery
     if (write.thumbnail) {
-      if (length(dim(cal))==3) aspot = cal
-      else aspot = cal[,,,1]
+      if (length(dim(z$cal))==3) aspot = z$cal
+      else aspot = z$cal[,,,1]
       writeThumbnail(x, uname=uname, p=p, input.image=aspot)
     }
     
