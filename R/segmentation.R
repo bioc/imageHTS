@@ -49,10 +49,10 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     if (write.cal.view) {
       nbimages = getNumberOfFrames(cal, 'render')
       for (spot in 1:nbimages) {
-        if (length(dim(cal))==3) caspot = cal
-        else caspot = cal[,,,spot]
+        if (length(dim(cal))==3) aspot = cal
+        else aspot = cal[,,,spot]
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
-        writeImage(caspot, file=ff, quality=95)
+        writeImage(aspot, file=ff, quality=95)
       }
     }
     
@@ -77,11 +77,11 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     if (write.seg.view) {
       nbimages = getNumberOfFrames(hseg, 'render')
       for (spot in 1:nbimages) {
-        if (length(dim(hseg))==3) caspot = hseg
-        else caspot = hseg[,,,spot]
+        if (length(dim(hseg))==3) aspot = hseg
+        else aspot = hseg[,,,spot]
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
         ff = gsub('_um.jpeg', '_us.jpeg', ff)
-        writeImage(caspot, file=ff, quality=95)
+        writeImage(aspot, file=ff, quality=95)
       }
     }
     
@@ -92,7 +92,9 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     }
     
     ## write calibrated, thumbnail images for webQuery
-    writeThumbnail(x, uname=uname, p=p, input.image=viewfull)
+    if (length(dim(cal))==3) aspot = cal
+    else aspot = cal[,,,1]
+    writeThumbnail(x, uname=uname, p=p, input.image=aspot)
     
     ## write contours for cellPicker
     writeContours(x, uname, access=access)
