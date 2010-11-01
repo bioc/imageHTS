@@ -1,3 +1,6 @@
+1.1.2
+- supports partial data writing during segmentation
+
 1.1.1
 - wellid is now supported in SourceFilenamePattern
 

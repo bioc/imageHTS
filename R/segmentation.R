@@ -21,34 +21,75 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
   cal = z$cal
   nseg = z$nseg
   cseg = z$cseg
+  
+  ## default writing data scheme
+  write.cal = TRUE
+  write.cal.view = TRUE
+  write.cal.view.tiled = TRUE
+  write.seg = TRUE
+  write.seg.view = FALSE
+  write.seg.view.tiled = TRUE
+
+  ## update writing data scheme
+  if (!is.null(p$seg.write.cal)) write.cal = as.logical(p$seg.write.cal)
+  if (!is.null(p$seg.write.cal.view)) write.cal.view = as.logical(p$seg.write.cal.view)
+  if (!is.null(p$seg.write.cal.view.tiled)) write.cal.view.tiled= as.logical(p$seg.write.cal.view.tiled)
+  if (!is.null(p$seg.write.seg)) write.seg = as.logical(p$seg.write.seg)
+  if (!is.null(p$seg.write.seg.view)) write.seg.view = as.logical(p$seg.write.seg.view)
+  if (!is.null(p$seg.write.seg.view.tiled)) write.seg.view.tiled = as.logical(p$seg.write.seg.view.tiled)
 
   if (writeData) {
-    ## saving calibrated images
-    ff = fileHTS(x, 'cal', uname=uname, createPath=TRUE, access='local')
-    save(cal, file=ff, compress=TRUE)
-    
-    ## saving segmentation data
-    ff = fileHTS(x, 'seg', uname=uname, createPath=TRUE, access='local')
-    seg = list(nseg=nseg, cseg=cseg)
-    save(seg, file=ff, compress=TRUE)
-    
-    ## write calibrated, unmonted images
-    nbimages = getNumberOfFrames(cal, 'render')
-    for (spot in 1:nbimages) {
-      if (length(dim(cal))==3) caspot = cal
-      else caspot = cal[,,,spot]
-      ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
-      writeImage(caspot, file=ff, quality=95)
+    ## save calibrated data
+    if (write.cal) {
+      ff = fileHTS(x, 'cal', uname=uname, createPath=TRUE, access='local')
+      save(cal, file=ff, compress=TRUE)
+    }
+
+    ## write calibrated images
+    if (write.cal.view) {
+      nbimages = getNumberOfFrames(cal, 'render')
+      for (spot in 1:nbimages) {
+        if (length(dim(cal))==3) caspot = cal
+        else caspot = cal[,,,spot]
+        ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
+        writeImage(caspot, file=ff, quality=95)
+      }
     }
     
-    ## write calibrated, monted images
-    ff = fileHTS(x, 'viewfull', uname=uname, createPath=TRUE, access='local')
-    viewfull = tile(cal, montage, fg.col='black', bg.col='black')
-    writeImage(viewfull, ff, quality=95)
+    ## write calibrated images, tiled
+    if (write.cal.view.tiled) {
+      ff = fileHTS(x, 'viewfull', uname=uname, createPath=TRUE, access='local')
+      viewfull = tile(cal, montage, fg.col='black', bg.col='black')
+      writeImage(viewfull, ff, quality=95)
+    }
+    
+    ## save segmentation data
+    if (write.seg) {
+      ff = fileHTS(x, 'seg', uname=uname, createPath=TRUE, access='local')
+      seg = list(nseg=nseg, cseg=cseg)
+      save(seg, file=ff, compress=TRUE)
+    }
+    
+    ## prepare hseg
+    if (write.seg.view || write.seg.view.tiled) hseg = highlightSegmentation(cal, nseg, cseg)
     
     ## write calibrated images with segmentation information
-    ff = fileHTS(x, 'viewseg', uname=uname, createPath=TRUE, access='local')
-    writeImage(tile(highlightSegmentation(cal, nseg, cseg), montage, fg.col='black', bg.col='black'), ff, quality=95)
+    if (write.seg.view) {
+      nbimages = getNumberOfFrames(hseg, 'render')
+      for (spot in 1:nbimages) {
+        if (length(dim(hseg))==3) caspot = hseg
+        else caspot = hseg[,,,spot]
+        ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
+        ff = gsub('_um.jpeg', '_us.jpeg', ff)
+        writeImage(caspot, file=ff, quality=95)
+      }
+    }
+    
+    ## write calibrated images with segmentation information, tiled
+    if (write.seg.view.tiled) {
+      ff = fileHTS(x, 'viewseg', uname=uname, createPath=TRUE, access='local')
+      writeImage(tile(hseg, montage, fg.col='black', bg.col='black'), ff, quality=95)
+    }
     
     ## write calibrated, thumbnail images for webQuery
     writeThumbnail(x, uname=uname, p=p, input.image=viewfull)
