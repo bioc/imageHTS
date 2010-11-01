@@ -16,11 +16,6 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
   ## call segmentation method
   segMethod = p$seg.method
   z = eval(call(segMethod, x=x, uname=uname, p=p, access=access))
-
-  ## write output segmentation results to disk 
-  cal = z$cal
-  nseg = z$nseg
-  cseg = z$cseg
   
   ## default writing data scheme
   write.cal = TRUE
@@ -51,12 +46,11 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
 
     ## write calibrated images
     if (write.cal.view) {
-      nbimages = getNumberOfFrames(cal, 'render')
-      for (spot in 1:nbimages) {
-        if (length(dim(cal))==3) aspot = z$cal
-        else aspot = z$cal[,,,spot]
+      nbimages = getNumberOfFrames(z$cal, 'render')
+      for (spot in 1:nbimages) {       
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
-        writeImage(aspot, file=ff, quality=95)
+        frame = getFrame(z$cal, spot, type='render')
+        writeImage(frame, file=ff, quality=95)
       }
     }
     
@@ -81,11 +75,10 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     if (write.seg.view) {
       nbimages = getNumberOfFrames(hseg, 'render')
       for (spot in 1:nbimages) {
-        if (length(dim(hseg))==3) aspot = hseg
-        else aspot = hseg[,,,spot]
+        frame = getFrame(hseg, spot, type='render')
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
         ff = gsub('_um.jpeg', '_us.jpeg', ff)
-        writeImage(aspot, file=ff, quality=95)
+        writeImage(frame, file=ff, quality=95)
       }
     }
     
@@ -97,9 +90,8 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     
     ## write calibrated, thumbnail images for webQuery
     if (write.thumbnail) {
-      if (length(dim(z$cal))==3) aspot = z$cal
-      else aspot = z$cal[,,,1]
-      writeThumbnail(x, uname=uname, p=p, input.image=aspot)
+      frame = getFrame(z$cal, 1, type='render')
+      writeThumbnail(x, uname=uname, p=p, input.image=frame)
     }
     
     ## write contours for cellPicker
