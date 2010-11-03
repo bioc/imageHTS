@@ -16,6 +16,9 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
   ## call segmentation method
   segMethod = p$seg.method
   z = eval(call(segMethod, x=x, uname=uname, p=p, access=access))
+  cal = z$cal
+  nseg = z$nseg
+  cseg = z$cseg
   
   ## default writing data scheme
   write.cal = TRUE
@@ -41,15 +44,15 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     ## save calibrated data
     if (write.cal) {
       ff = fileHTS(x, 'cal', uname=uname, createPath=TRUE, access='local')
-      save(z$cal, file=ff, compress=TRUE)
+      save(cal, file=ff, compress=TRUE)
     }
 
     ## write calibrated images
     if (write.cal.view) {
-      nbimages = getNumberOfFrames(z$cal, 'render')
+      nbimages = getNumberOfFrames(cal, 'render')
       for (spot in 1:nbimages) {       
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
-        frame = getFrame(z$cal, spot, type='render')
+        frame = getFrame(cal, spot, type='render')
         writeImage(frame, file=ff, quality=95)
       }
     }
@@ -57,19 +60,19 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     ## write calibrated images, tiled
     if (write.cal.view.tiled) {
       ff = fileHTS(x, 'viewfull', uname=uname, createPath=TRUE, access='local')
-      viewfull = tile(z$cal, montage, fg.col='black', bg.col='black')
+      viewfull = tile(cal, montage, fg.col='black', bg.col='black')
       writeImage(viewfull, ff, quality=95)
     }
     
     ## save segmentation data
     if (write.seg) {
       ff = fileHTS(x, 'seg', uname=uname, createPath=TRUE, access='local')
-      seg = list(nseg=z$nseg, cseg=z$cseg)
+      seg = list(nseg=nseg, cseg=cseg)
       save(seg, file=ff, compress=TRUE)
     }
     
     ## prepare hseg
-    if (write.seg.view || write.seg.view.tiled) hseg = highlightSegmentation(z$cal, z$nseg, z$cseg)
+    if (write.seg.view || write.seg.view.tiled) hseg = highlightSegmentation(cal, nseg, cseg)
     
     ## write calibrated images with segmentation information
     if (write.seg.view) {
@@ -90,7 +93,7 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     
     ## write calibrated, thumbnail images for webQuery
     if (write.thumbnail) {
-      frame = getFrame(z$cal, 1, type='render')
+      frame = getFrame(cal, 1, type='render')
       writeThumbnail(x, uname=uname, p=p, input.image=frame)
     }
     
