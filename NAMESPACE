@@ -34,7 +34,7 @@ export(
        "fileHTS", "readHTS", "parseDCF", "collectCellFeatures", "getWellFeatures",
 
        ## uname
-       "getUnames", "prw2uname", "uname2prw", "rowcol2well", "well2rowcol",
+       "getUnames", "prw2uname", "uname2prw", "rowcol2well", "well2rowcol", "well2wellid",
 
        ## misc
        "zprime", "highlightSegmentation",  "countObjects", "getImageConf"
