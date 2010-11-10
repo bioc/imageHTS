@@ -93,7 +93,7 @@ include 'conf.php';
       echo("<td valign='bottom'><a class='imgaction' href='".$viewseg."'> seg </a><br>");
       echo("<a class='imgaction' href='".$dataseg."'> data </a><br>");
       echo("<a class='imgaction' href='".$cellpicker_pre);
-      for ($j = 1; $j <= $montagex*$montagey; $j++) {
+      for ($j = 1; $j <= $nbspots; $j++) {
         if ($j != 1) echo("+");
 	echo($uname."-".$j);
       }
