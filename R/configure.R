@@ -38,14 +38,18 @@ parseImageConf = function(filename, localPath='myscreen', serverURL, access='cac
 
   if (!is.null(ic$Montage)) ic$Montage = as.numeric(ic$Montage)
   else ic$Montage = c(1, 1)
+
+  if (!is.null(ic$SpotNames)) nbSpots = length(ic$SpotNames)
+  else nbSpots = 1
   
   ## report
-  cat('File "',filename,'" read.\n',sep='')
-  cat('Number of plates=',nbPlates,'\n')
-  cat('Number of replicates=',nbReplicates,'\n')
-  cat('Number of wells=',nbWells,'\n')
-  cat('Number of channels=',nbChannels,'\n')
-  
+  cat('File "',filename, '" read.\n', sep='')
+  cat('Number of plates=', nbPlates,'\n')
+  cat('Number of replicates=', nbReplicates,'\n')
+  cat('Number of wells=', nbWells,'\n')
+  cat('Number of channels=', nbChannels,'\n')
+  cat('Number of spots=', nbSpots,'\n')
+                                
   ## nbChannels (cellHTS2 channels, not image channels) is not known at this stage
   ## build an cellHTS object filled with NA, with only one channel
   aplates = rep(1:nbPlates, each=nbReplicates*nbWells)

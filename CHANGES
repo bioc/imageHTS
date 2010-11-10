@@ -1,3 +1,6 @@
+1.1.5
+- nbspots is now written in webquery/conf.php by installWebQuery() instead of montagex and montagey
+
 1.1.4
 - exports well2wellid
 

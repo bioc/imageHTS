@@ -23,13 +23,14 @@ installWebQuery = function(x) {
   nbReplicates = length(ic$ReplicateNames)
   nbRows = pdim(x)[1]
   nbCols = pdim(x)[2]
+  if (!is.null(ic$SpotNames)) nbSpots = length(ic$SpotNames)
+  else nbSpots = 1
   conf = '<?php\n';
   conf = paste(conf, '$nbplates = ', nbPlates, ';\n', sep='')
   conf = paste(conf, '$nbreplicates = ', nbReplicates, ';\n', sep='')
   conf = paste(conf, '$nbrows = ', nbRows, ';\n', sep='')
   conf = paste(conf, '$nbcols = ', nbCols, ';\n', sep='')
-  conf = paste(conf, '$montagex = ', ic$Montage[1], ';\n', sep='')
-  conf = paste(conf, '$montagey = ', ic$Montage[2], ';\n', sep='')
+  conf = paste(conf, '$nbspots = ', nbSpots, ';\n', sep='')
   conf = paste(conf, '$assayname = "', ic$AssayName, '";\n', sep='')
   conf = paste(conf, '?>')
   fconf = fileHTS(x, type='file', filename='webquery/conf.php', createPath=TRUE, access='local')
