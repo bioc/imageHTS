@@ -258,7 +258,7 @@ fileHTS = function(x, type, ..., createPath=FALSE, access='cache') {
            paths = ifelse(dir!='', file.path(localPath, dir, filename), file.path(localPath, filename))
            if (createPath) sapply(paths, function(z) {
              dz = dirname(z)
-             if (!file.exists(dz)) dir.create(dz, recursive=TRUE)
+             if (!file.exists(dz)) dir.create(dz, recursive=TRUE, showWarnings=FALSE)
            })
            paths
          },
