@@ -80,6 +80,7 @@ setMethod("annotate", signature("imageHTS"),
 
 readHTS = function(x, type, ..., access='cache', format=NULL) {
   f = fileHTS(x, type=type, ..., access=access)
+  if (!file.exists(f)) stop('cannot find filename=', f)
   z = gregexpr('\\.', f)[[1]]
   extension = substr(f, z[length(z)]+1, nchar(f))
 
