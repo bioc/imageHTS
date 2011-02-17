@@ -76,8 +76,8 @@ collectCellFeatures = function(x, uname, spot=NULL, id=NULL, access='cache') {
         ftrs = merge(ftrs, ind, by=c('spot', 'id'), all.y=TRUE)
       }
       cat('OK\n')
-      ftrs = data.frame(uname=u, ftrs, stringsAsFactors=FALSE)
-      ftrs
+      if (nrow(ftrs)>0) data.frame(uname=u, ftrs, stringsAsFactors=FALSE)
+      else data.frame(uname=character(0), ftrs, stringsAsFactors=FALSE)
     }                   
     else {
       cat('NA\n')
