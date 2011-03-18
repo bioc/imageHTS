@@ -162,20 +162,22 @@ fileHTS = function(x, type, ..., createPath=FALSE, access='cache') {
            ## Calibrated images in rda format
            if (!'uname'%in%nargs) stop("fileHTS: argument 'uname' is missing")
            dir = file.path('data', subdir)
-           filename = paste(uname, '_cal.rda', sep='') 
+           if ('spot'%in%nargs) filename = paste(uname, '-', spot, '_cal.rda', sep='')
+           else filename = paste(uname, '_cal.rda', sep='')
          },
          'seg'={
            ## Segmentation information in rda format
            if (!'uname'%in%nargs) stop("fileHTS: argument 'uname' is missing")
            dir = file.path('data', subdir)
-           filename = paste(uname, '_seg.rda', sep='') 
+           if ('spot'%in%nargs) filename = paste(uname, '-', spot, '_seg.rda', sep='')
+           else filename = paste(uname, '_seg.rda', sep='')
          },
          'contour'={
            ## Cell contours information in Javascript
            if (!'uname'%in%nargs) stop("fileHTS: argument 'uname' is missing")
            if (!'spot'%in%nargs) stop("fileHTS: argument 'spot' is missing")
            dir = file.path('cellpicker', subdir)
-           filename = paste(uname, '-', spot, '_con.js', sep='') 
+           filename = paste(uname, '-', spot, '_con.js', sep='')
          },
          'ftrs'= {
            ## Cell features in tab format

@@ -4,15 +4,25 @@ getCellFtrsATH = function(cal, seg) {
   cseg = seg$cseg
 
   ftrs = lapply(1:nf, function(i) {
-    c = cseg[,,i]
-    n = nseg[,,i]
+    if (dim(cseg)==3) {
+      c = cseg[,,i]
+      n = nseg[,,i]
+    } else {
+      c = cseg
+      n = nseg
+    }
 
     ## image with no cells
     if (countObjects(c)==0) return(NA)
-    
-    a = cal[,,1,i]
-    t = cal[,,2,i]
-    h = cal[,,3,i]
+    if (dim(cal)==4) {
+      a = cal[,,1,i]
+      t = cal[,,2,i]
+      h = cal[,,3,i]
+    } else {
+      a = cal[,,1]
+      t = cal[,,2]
+      h = cal[,,3]
+    }
     m = sqrt(a^2+t^2)
 
     ## geometric features (gc = geometry of the cell, gn = geometry of the nucleus)
