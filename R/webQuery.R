@@ -35,6 +35,9 @@ installWebQuery = function(x) {
   conf = paste(conf, '?>')
   fconf = fileHTS(x, type='file', filename='webquery/conf.php', createPath=TRUE, access='local')
   write(conf, file=fconf)
+
+  ## install cellPicker
+  installCellPicker(x)
 }
 
 writeThumbnail = function(x, uname, p, input.image, output.filename, access='cache') {

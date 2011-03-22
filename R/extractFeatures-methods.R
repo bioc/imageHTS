@@ -4,7 +4,7 @@ getCellFtrsATH = function(cal, seg) {
   cseg = seg$cseg
 
   ftrs = lapply(1:nf, function(i) {
-    if (dim(cseg)==3) {
+    if (length(dim(cseg))==3) {
       c = cseg[,,i]
       n = nseg[,,i]
     } else {
@@ -14,7 +14,7 @@ getCellFtrsATH = function(cal, seg) {
 
     ## image with no cells
     if (countObjects(c)==0) return(NA)
-    if (dim(cal)==4) {
+    if (length(dim(cal))==4) {
       a = cal[,,1,i]
       t = cal[,,2,i]
       h = cal[,,3,i]

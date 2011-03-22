@@ -40,6 +40,7 @@ installCellPicker = function(x) {
 }
 
 popCellPicker = function(x, uname, spot=NULL, access='server', browse=TRUE) {
+  if (x@serverURL=='') access='local'
   plabel = 'X'
   if (is.null(spot)) {
     nbspots = prod(getImageConf(x)$Montage)
@@ -124,7 +125,7 @@ getError = function(startPoint, endPoint, testedPoints, sortedOrientedContour) {
   return(errs)
 }
 
-getCoords = function(segmentedImage, tolErr=0) {		  
+getCoords = function(segmentedImage, tolErr=3) {
   ## initialization	
   cellNumber = countObjects(segmentedImage)
   finalCoords = list()
