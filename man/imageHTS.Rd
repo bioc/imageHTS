@@ -60,6 +60,7 @@
  \item uname2prw: convert well unique names in a (plate, replicate, well) data frame
  \item rowcol2well: convert a (row, col) data frame in well names
  \item well2rowcol: convert well names in a (row, col) data frame
+ \item well2wellid: convert well coordinates in numerical well identifiers
  }
  
  Miscellaneous functions.

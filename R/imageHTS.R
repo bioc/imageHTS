@@ -305,7 +305,7 @@ well2rowcol = function(well) {
        col=as.numeric(substr(well, 2, 3)))
 }
 
-well2wellid = function(row, col, direction, dim) {
+well2wellid = function(row, col, direction='row', dim) {
   direction = tolower(direction)
   if (direction=='row') byrow=TRUE
   else if (direction=='col') byrow=FALSE

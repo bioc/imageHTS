@@ -4,6 +4,7 @@
 \alias{uname2prw}
 \alias{rowcol2well}
 \alias{well2rowcol}
+\alias{well2wellid}
 
 \title{Convert and parse well unique names}
 
@@ -15,7 +16,8 @@
 prw2uname(plate, replicate, row, col, well)
 uname2prw(uname)
 rowcol2well(row, col)
-well2rowcol(well) 
+well2rowcol(well)
+well2wellid(row, col, direction='row', dim)
 }
 
 \arguments{
@@ -26,6 +28,11 @@ well2rowcol(well)
   \item{col}{A numeric vector of column indices}
   \item{well}{A character vector of well names.}
   \item{uname}{A character vector of well unique names.}
+  \item{direction}{A character string containing the direction of the
+    mapping. Valid values are \code{row} and \code{col}. Default is
+    \code{row}, where the well identifier 2 points is mapped to well (1, 2)}.
+  \item{dim}{A numeric vector of length two, containing the dimensions
+    (number of rows, number of columns) of a plate}.
 }
 
 \value{
@@ -35,6 +42,7 @@ well2rowcol(well)
   \code{rowcol2well} returns a character vector of well names.
   \code{well2rowcol} returns a data.frame containing the numeric vectors
   \code{row} and \code{col}.
+  \code{well2wellid} returns a numeric vector containing the well identifiers.
 }
 
 \details{
