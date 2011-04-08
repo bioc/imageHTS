@@ -405,21 +405,6 @@ getImageConf = function(x) {
   x@imageConf
 }
 
-resync = function() {
-  library('imageHTS')
-  source('R/imageHTS.R')
-  source('R/configure.R')
-  source('R/segmentation.R')
-  source('R/segmentation-methods.R')
-  source('R/extractFeatures.R')
-  source('R/extractFeatures-methods.R')
-  source('R/summarize.R')
-  source('R/cellPicker.R')
-  source('R/classification.R')
-  source('R/webQuery.R')
-  source('R/quality.R')
-}
-
 msg = function(...) {
   if (options()$verbose) cat(...,"\n")
   else cat(substr(...,1,1))

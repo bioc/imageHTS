@@ -25,7 +25,13 @@ export(
        "parseImageConf",
 
        ## process well
-       "segmentWells", "extractFeatures", "readLearnTS", "predictCellLabels", "summarizeWells", "segmentATH", "getCellFtrsATH", 
+       "segmentWells", "extractFeatures", "readLearnTS", "predictCellLabels", "summarizeWells",
+
+       ## HeLa cells
+       "segmentATH", "getCellFtrsATH",
+
+       ## Yeast BF
+       "segmentYeastBF", "segmentRing", 
        
        ## inspect screen data
        "installWebQuery", "popWebQuery", "installCellPicker", "popCellPicker",
