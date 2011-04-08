@@ -83,7 +83,6 @@ segmentYeastBF = function(x, uname, p, access) {
     
     ## read and segment bright field
     bf = readImage(f1)
-    bf = calibrate.bf(bf)
     seg = segmentRing(bf, p)
     if (is.null(sbf)) {
       sbf = bf
