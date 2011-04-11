@@ -3,7 +3,7 @@
 \alias{segmentATH}
 \alias{getCellFtrsATH}
 
-\title{Example segmentation and feature extraction functions.}
+\title{Segmentation and quantification of cells stained for DNA, actin and tubulin.}
 
 \description{
   \code{segmentATH} and \code{getCellFtrsATH} are segmentation and
