@@ -34,7 +34,7 @@ export(
        "segmentYeastBF", "segmentRing", 
        
        ## inspect screen data
-       "installWebQuery", "popWebQuery", "installCellPicker", "popCellPicker",
+       "installWebQuery", "popWebQuery", "installCellPicker", "popCellPicker", "makeCellHTS",
 
        ## access
        "fileHTS", "readHTS", "parseDCF", "collectCellFeatures", "getWellFeatures",
