@@ -46,38 +46,30 @@ makeCellHTS(x, profiles, measurementNames, name)
 
 \examples{
  \dontrun{
-    ## initialize imageHTS object using the local submorph screen
-    local = tempdir()
-    server = system.file('submorph', package='imageHTS')
-    x = parseImageConf('conf/imageconf.txt', localPath=local, serverURL=server)
-    x = configure(x, 'conf/description.txt', 'conf/plateconf.txt', 'conf/screenlog.txt')
-    
-    ## segment non-empty wells
-    unames = setdiff(getUnames(x), getUnames(x, content='empty'))
-    segmentWells(x, uname=unames, segmentationPar='conf/segmentationpar.txt')
-    
-    ## extract features
-    extractFeatures(x, uname=unames, 'conf/featurepar.txt')
-    
-    ## cell classification
-    readLearnTS(x, 'conf/featurepar.txt', 'conf/trainingset.txt')
-    predictCellLabels(x, unames)
-    
-    ## summarize features
-    summarizeWells(x, unames, 'conf/featurepar.txt')
-    
-    ## get profiles
-    profiles = readHTS(x, type='file', filename='data/profiles.tab',
-    format='tab')
+   ## initialize kimorph object
+   localPath = file.path(tempdir(), 'kimorph')
+   serverURL = 'http://www.ebi.ac.uk/~gpau/imageHTS/screens/kimorph'
+   x = parseImageConf('conf/imageconf.txt', localPath=localPath, serverURL=serverURL)
+   x = configure(x, 'conf/description.txt', 'conf/plateconf.txt', 'conf/screenlog.txt')
+   x = annotate(x, 'conf/annotation.txt')
+   
+   ## get profiles
+   profiles = readHTS(x, type='file', filename='data/profiles.tab', format='tab')
 
-    ## write cellHTS report
-    ft = c('med.c.t.m.int', 'med.c.g.ss', 'med.c.g.ec', 'med.n.h.m.int', 'med.c.a.m.int')
-    measurementNames = c('tubulin intensity', 'cell size', 'cell eccentricity', 'dna intensity', 'actin intensity')
-    y = makeCellHTS(x, xd[,c('uname', ft)], measurementNames=measurementNames, name='kimorph')
-    pathConf = file.path(localPath, 'conf')
-    y = configure(y, 'description.txt', 'plateconf.txt', 'screenlog.txt', path=pathConf)
-    y = annotate(y, 'annotation.txt', path=pathConf)
-    yn = normalizePlates(y, scale='multiplicative', log=FALSE, method='median', varianceAdjust='none')
-    writeReport(raw=y, normalized=yn, outdir='report-cellHTS2', mainScriptFile='imageHTS-paper.R', force=TRUE)
+   ## prepare cellHTS2 report
+   ft = c('med.c.t.m.int', 'med.c.g.ss', 'med.c.g.ec', 'med.n.h.m.int', 'med.c.a.m.int')
+   measurementNames = c('tubulin intensity', 'cell size', 'cell eccentricity', 'dna intensity', 'actin intensity')
+   y = makeCellHTS(x, profiles[,c('uname', ft)], measurementNames=measurementNames, name='kimorph')
+   pathConf = file.path(localPath, 'conf')
+   y = configure(y, 'description.txt', 'plateconf.txt', 'screenlog.txt', path=pathConf)
+   y = annotate(y, 'annotation.txt', path=pathConf)
+   yn = normalizePlates(y, scale='multiplicative', log=FALSE,
+   method='median', varianceAdjust='none')
+
+   ## write cellHTS2 report
+   se = getSettings()
+   se$plateList$intensities$include = TRUE
+   setSettings(se)
+   writeReport(raw=y, normalized=yn, outdir='report-cellHTS2', force=TRUE)
   }
 }

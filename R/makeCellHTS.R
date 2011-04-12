@@ -8,6 +8,6 @@ makeCellHTS = function(x, profiles, measurementNames, name) {
   xd = data.frame(plate=prw$plate, replicate=prw$replicate, well=well, profiles)
   if (missing(measurementNames)) y = buildCellHTS2(xd)
   else y = buildCellHTS2(xd, measurementNames)
-  if (missing(name)) name(y) = name
+  if (!missing(name)) name(y) = name
   y
 }
