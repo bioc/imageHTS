@@ -6,7 +6,7 @@
 \title{Segmentation of yeast cells and ring-shaped objects.}
 
 \description{
-  \code{segmentYeastBF} segments yeast cells from bright field micrscopy
+  \code{segmentYeastBF} segments yeast cells from bright field microscopy
   images.
   \code{segmentRing} segments ring-shape objects in images.
 }
@@ -49,7 +49,7 @@ segmentRing(a, p)
   \code{segmentWells}.
   
   \code{segmentRing} is used by \code{segmentYeastBF} and segments
-  images containing ring-shaped objects. The list of parameters \code{p}
+  an image containing ring-shaped objects. The list of parameters \code{p}
   should contain:
   \itemize{
     \item \code{edge.threshold}: a threshold parameter giving the cell edges
@@ -88,7 +88,6 @@ p = list(edge.threshold=0.05, max.membrane.thickness=5, crown.thickness=8,
     locmin.erode.size=3, cell.max.overlap=2, nucleus.radius.offset=10,
     cell.radius.offset=4)
 seg = segmentRing(a, p)
-hseg = highlightSegmentation(EBImage::channel(a, 'rgb'), cseg=seg$cseg,
-thick=TRUE)
+hseg = highlightSegmentation(EBImage::channel(a, 'rgb'), cseg=seg$cseg, thick=TRUE)
 if (interactive()) display(hseg)
 }
