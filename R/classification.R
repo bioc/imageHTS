@@ -76,5 +76,3 @@ predictCellLabels = function(x, uname, access='cache') {
     }
   }
 }
-
-test.pop
