@@ -11,7 +11,7 @@
 }
 
 \usage{
-popCellPicker(x, uname, spot=NULL, access='server', browse=TRUE)
+popCellPicker(x, uname, spot, id.highlight, access='server', browse=TRUE)
 popWebQuery(x, access='server', browse=TRUE)
 }
 
@@ -20,7 +20,9 @@ popWebQuery(x, access='server', browse=TRUE)
   \item{uname}{A character vector, containing the well names to
     annotate. See \code{getUnames} for details.}
   \item{spot}{An optional numeric vector, containing the spot indexes of
-    the wells to annotate. If missing, all spots are used.}
+    the wells to annotate. If missing, only the first spot is used.}
+  \item{id.highlight}{An optional numeric vector, containing the object indexes
+    to highlight. If missing, no object is highlighted.}
   \item{access}{A character string indicating how to access the
     data. Valid values are \code{local}, \code{cache} and \code{server},
     the default. See \code{fileHTS} for details.}

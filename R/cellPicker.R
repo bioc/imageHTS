@@ -39,13 +39,23 @@ installCellPicker = function(x) {
   invisible(NULL)
 }
 
-popCellPicker = function(x, uname, spot=NULL, access='server', browse=TRUE) {
+popCellPicker = function(x, uname, spot, id.highlight, access='server', browse=TRUE) {
   if (x@serverURL=='') access='local'
   plabel = 'X'
-  if (is.null(spot)) {
-    nbspots = prod(getImageConf(x)$Montage)
-    images = paste(paste(rep(uname, each=nbspots), 1:nbspots, sep='-'), collapse='+')
-  } else images = paste(paste(uname, spot, sep='-'), collapse='+')
+
+  if (missing(spot)) spot = rep(1, length(uname))
+  else if (length(spot)!=length(uname)) stop("'uname' and 'spot' must have the same length")
+  unamespot = paste(uname, spot, sep="-")
+
+  if (missing(id.highlight)) {
+    unamespotid = unique(unamespot)
+  } else {
+    if (length(id.highlight)!=length(uname)) stop("'uname' and 'id.highlight' must have the same length")
+    unamespotid = tapply(id.highlight, unamespot, paste, collapse="@")
+    unamespotid = paste(names(unamespotid), unamespotid, sep="@")
+  }
+  
+  images = paste(unamespotid, collapse="+")
   
   url = fileHTS(x, type='file', filename='cellpicker.html', access=access)
   if (access!='server') url = paste('file://', url, sep='')
@@ -171,4 +181,13 @@ getCoords = function(segmentedImage, tolErr=3) {
     }, silent=TRUE)
   }		
   return (finalCoords)	
+}
+
+test.popCellPicker = function() {
+  ts = readHTS(x, type="file", filename="conf/trainingset.txt", access=access, format="tab")
+  z = ts$label=="P"
+  uname = ts$uname[z]
+  spot = ts$spot[z]
+  id = ts$id[z]
+  popCellPicker(x, uname, spot, id)
 }
