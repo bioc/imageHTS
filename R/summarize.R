@@ -1,4 +1,4 @@
-summarizeWells = function(x, uname, featurePar, access='cache') {
+summarizeWells = function(x, uname, featurePar, profileFilename="data/profiles.tab", access='cache') {
   p = readHTS(x, type='file', filename=featurePar, access=access, format='dcf')
   
   profiles = as.list(rep(NA, length(uname)))
@@ -53,7 +53,7 @@ summarizeWells = function(x, uname, featurePar, access='cache') {
  
   if (all(is.na(profiles[,1]))) stop('no cell features found, no profiles generated.')
   else {
-    ff = fileHTS(x, type='file', filename='data/profiles.tab', createPath=TRUE, access='local')
+    ff = fileHTS(x, type='file', filename=profileFilename, createPath=TRUE, access='local')
     write.table(profiles, file=ff, sep='\t', quote=FALSE, row.names=FALSE, col.names=TRUE)
   }
   

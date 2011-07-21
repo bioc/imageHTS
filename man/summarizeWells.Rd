@@ -9,7 +9,7 @@
 }
 
 \usage{
-summarizeWells(x, uname, featurePar, access='cache')
+summarizeWells(x, uname, featurePar, profileFilename="data/profiles.tab", access='cache')
 }
 
 \arguments{
@@ -20,6 +20,9 @@ summarizeWells(x, uname, featurePar, access='cache')
   
   \item{featurePar}{A character string, indicating the filename
     containing the feature extraction parameters.}
+
+  \item{profileFilename}{A character string, indicating the output filename
+    to store the phenortpic profiles.}
   
   \item{access}{A character string indicating how to access the
     data. Valid values are \code{local}, \code{server} and \code{cache},
