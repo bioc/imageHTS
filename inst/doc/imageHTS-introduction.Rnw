@@ -236,27 +236,28 @@ dim(y)
 y[1:10, 1:7]
 @ 
 
-84 cells are present in the well and each cell is described with 180 features.
+89 cells are present in the well and each cell is described with 180 features.
 Cell features include geometrical features, moment-based features, Haralick moments and 
 Zernicke features. Cell features are described in the manual pages of the function
 \Rfunction{getFeatures} of the package EBImage. Some features have a direct
-interpretation, such as \Robject{c.g.s}, which measures the cell area or
-\Robject{c.t.m.int}, which quantifies the cell tubulin intensity. In the
+interpretation, such as \Robject{c.s.area}, which measures the cell area or
+\Robject{c.t.b.mean}, which quantifies the cell tubulin mean intensity. In the
 following example, we display the distribution of the latter within 
 the cells of the well, and identify the cells that have a tubulin 
 intensity higher than 1600.
 
 <<histfig, fig=TRUE, height=5>>=
-hist(y$c.t.m.int, 20, xlab='Cell tubulin intensity (a.u.)', main='')
+ctub <- y$c.t.b.mean*y$c.s.area
+hist(ctub, 20, xlab='Cell tubulin intensity (a.u.)', main='')
 abline(v=1600, col=2)
-cellid = which(y$c.t.m.int>1600)
+cellid = which(ctub>1600)
 print(cellid)
 @
 \begin{figure}[!h]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{imageHTS-introduction-histfig}
 \end{center}
-\caption{Distribution of cell tubulin intensity \Robject{c.t.m.int} in cells of well '001-02-C03'.}
+\caption{Distribution of cell tubulin intensity in cells of well '001-02-C03'.}
 \label{fig:histfig}
 \end{figure}
 
@@ -279,7 +280,7 @@ writeImage(hightub, 'hightub.jpeg', quality=80)
 \begin{figure}[!h]
 \begin{center}
 \includegraphics[width=0.9\textwidth]{hightub.jpeg}
-\caption{Cells of well '001-02-C03' having a tubulin intensity \Robject{c.t.m.int} higher than 1600.}
+\caption{Cells of well '001-02-C03' having a tubulin intensity higher than 1600.}
 \end{center}
 \end{figure}
 
@@ -317,7 +318,7 @@ cell classes: I (interphase), M (mitotic) and D (debris).
 predictCellLabels(x, uname)
 @ 
 
-66 interphase, 9 mitotic and 9 debris cells were predicted in the image.
+76 interphase, 8 mitotic and 5 debris cells were predicted in the image.
 The following example retrieves and displays the predicted cell labels.
 
 <<drawCellLabels>>=
@@ -364,23 +365,23 @@ summarizeWells(x, unames, 'conf/featurepar.txt')
 
 In the following example, the phenotypic profiles (previously computed and stored in the imageHTS
 package) are loaded with \Rfunction{readHTS} and averaged by well type. Only the following
-features are considered: n (cell number), med.c.g.s (median cell size), med.c.t.m.int (median cell tubulin
-intensity), M (mitotic cell fraction) and D (debris cell fraction).
+features are considered: n (cell number), med.c.s.area (median cell size), med.c.t.b.mean (median cell tubulin
+density), M (mitotic cell fraction) and D (debris cell fraction).
 
 <<sum>>=
 profiles = readHTS(x, type='file', filename='data/profiles.tab', format='tab')
 wfcontent = factor(as.character(getWellFeatures(x, unames)$controlStatus))
 table(wfcontent)
 zwf = split(1:nrow(profiles), wfcontent)
-ft = c('n', 'med.c.g.s', 'med.c.t.m.int', 'M', 'D')
+ft = c('n', 'med.c.s.area', 'med.c.t.b.mean', 'M', 'D')
 avef = do.call(rbind, lapply(zwf, function(z) colMeans(profiles[z, ft])))
 print(avef)
 @ 
 
 There are 4 \Robject{rluc} negative controls, 4 \Robject{ubc} positive controls
 and 4 \Robject{sample} wells in this screen. The average number of cells in
-\Robject{ubc} wells is 23.75, lower than in \Robject{rluc} wells, 90.50. 
-Moreover, the average fraction of debris cells in \Robject{ubc} wells, 0.59, 
+\Robject{ubc} wells is 26.25, lower than in \Robject{rluc} wells, 99.25. 
+Moreover, the average fraction of debris cells in \Robject{ubc} wells, 0.48, 
 is higher than in \Robject{rluc} wells, 0.04. A larger number of replicates and
 proper statistical testing would be needed to determine whether the observed
 changes are statistically significant.
@@ -500,7 +501,7 @@ a map of the phenotypic profiles using linear discriminant analysis (LDA),
 computed on the on the controls \Robject{rluc}, \Robject{ubc} and \Robject{trappc3}.
 
 <<lda1, fig=TRUE>>=
-library(MASS)
+library("MASS")
 z = wfcontent %in% c('rluc', 'ubc', 'trappc3')
 ft = 14:50
 ld = lda(xd[z, ft], as.character(wfcontent[z]))

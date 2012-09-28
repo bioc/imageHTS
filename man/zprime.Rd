@@ -73,10 +73,10 @@ Throughput Screening Assays. J Biomol Screening, 1999.
   b = profiles[match(getUnames(x, content='ubc'), profiles$uname),]
   
   ## compute Z'-factor scores on some features
-  ft = c('med.c.m.m.ss')
+  ft = c('med.c.t.m.majoraxis')
   cat('Z\'-factor original=',  zprime(a[,ft], b[,ft], 'original'), 'fixsd=',  zprime(a[,ft], b[,ft], 'fixsd'), '\n') 
   
   ## multivariate Z'-factor
-  ft = c('med.c.m.m.ss', 'med.n.h.m.ss', 'med.c.g.ec')
+  ft = c('med.c.t.m.majoraxis', 'med.n.h.m.majoraxis', 'med.c.h.b.mean')
   cat('Z\'-factor mahalanobis=',  zprime(a[,ft], b[,ft], 'mahalanobis'), '\n') 
 }

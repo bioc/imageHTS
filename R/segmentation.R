@@ -53,7 +53,7 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
       for (spot in 1:nbimages) {       
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
         frame = getFrame(cal, spot, type='render')
-        writeImage(frame, file=ff, quality=95)
+        writeImage(frame, ff, quality=95)
       }
     }
     
@@ -81,7 +81,7 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
         frame = getFrame(hseg, spot, type='render')
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
         ff = gsub('_um.jpeg', '_us.jpeg', ff)
-        writeImage(frame, file=ff, quality=95)
+        writeImage(frame, ff, quality=95)
       }
     }
     

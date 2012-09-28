@@ -22,7 +22,7 @@ parseDCF = function(filename) {
   ## split first :
   z = regexpr(':',tt)
   z[z<0] = nchar(tt)[z<0]+1
-  aa = matrix('', nr=length(tt), nc=2)
+  aa = matrix('', nrow=length(tt), ncol=2)
   aa[,1] = substr(tt, 1, z-1)
   aa[,2] = substr(tt, z+1, nchar(tt))
   tt = apply(aa, 1, as.list)

@@ -1,5 +1,5 @@
 extractfeatures.method: getCellFtrsATH
 cell.classes: D, I, M
-remove.classification.features: c.g.x, c.g.y, n.g.x, n.g.y
-cellHTS.features: n, med.c.g.s, med.c.g.ec, med.n.ah.cor, M
+remove.classification.features: c.a.m.cx, c.a.m.cy, c.t.m.cx, c.t.m.cy, c.h.m.cx, c.h.m.cy, c.m.m.cx, c.m.m.cy, n.a.m.cx, n.a.m.cy, n.t.m.cx, n.t.m.cy, n.h.m.cx, n.h.m.cy
+cellHTS.features: n, med.c.s.area, med.c.m.m.eccentricity, med.n.ah.cor, M
 cellHTS.features.name: Number of cells, Median cell size, Median cell ecc., Median A/H nuc. corr., Metaphase fraction

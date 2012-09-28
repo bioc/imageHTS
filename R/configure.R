@@ -111,7 +111,7 @@ buildCellHTS = function(x, assayName, channelNames=NULL, nbPlates, nbReplicates,
     z = match(unames, runames)
     xtemp[na.omit(z), i, ] = x[!is.na(z),]
   }
-  dat = lapply(1:nbChannels, function(ch) matrix(xtemp[,,ch,drop=FALSE], nc=nbReplicates, dimnames=list(Features=1:nbFeatures, Sample=1:nbReplicates)))
+  dat = lapply(1:nbChannels, function(ch) matrix(xtemp[,,ch,drop=FALSE], ncol=nbReplicates, dimnames=list(Features=1:nbFeatures, Sample=1:nbReplicates)))
   names(dat) = channelNames
   adata = do.call(assayDataNew, c(storage.mode="lockedEnvironment", dat))
     

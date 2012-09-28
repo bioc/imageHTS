@@ -27,20 +27,20 @@ getCellFtrsATH = function(cal, seg) {
 
     ## geometric features (gc = geometry of the cell, gn = geometry of the nucleus)
     msg('geom')
-    gc = geofeatures(c)
-    gn = geofeatures(n)
+    gc = computeFeatures.shape(c)
+    gn = computeFeatures.shape(n)
     colnames(gc) = paste('c.', colnames(gc), sep='')
     colnames(gn) = paste('n.', colnames(gn), sep='')
     
     ## moment features (mca = moments computed on the channel a over the cell)
     msg('moments')
-    mca = mymoments(c, a) 
-    mct = mymoments(c, t)
-    mch = mymoments(c, h)
-    mcm = mymoments(c, m)
-    mna = mymoments(n, a)
-    mnt = mymoments(n, t)
-    mnh = mymoments(n, h)
+    mca = computeFeatures.moment(c, a) 
+    mct = computeFeatures.moment(c, t)
+    mch = computeFeatures.moment(c, h)
+    mcm = computeFeatures.moment(c, m)
+    mna = computeFeatures.moment(n, a)
+    mnt = computeFeatures.moment(n, t)
+    mnh = computeFeatures.moment(n, h)
     colnames(mca) = paste('c.a.', colnames(mca), sep='')
     colnames(mct) = paste('c.t.', colnames(mct), sep='')
     colnames(mch) = paste('c.h.', colnames(mch), sep='')
@@ -48,34 +48,33 @@ getCellFtrsATH = function(cal, seg) {
     colnames(mna) = paste('n.a.', colnames(mna), sep='')
     colnames(mnt) = paste('n.t.', colnames(mnt), sep='')
     colnames(mnh) = paste('n.h.', colnames(mnh), sep='')
-   
-    ## Zernike moments features (znh = Zernike moments computed on the channel h over the nucleus)
-    msg('zernike')
-    zf = c('z.0101', 'z.0202', 'z.0301', 'z.0303', 'z.0404')
-    zca = zernikeMoments(c, a, N=4, R=60)[,zf,drop=FALSE]
-    zct = zernikeMoments(c, t, N=4, R=60)[,zf,drop=FALSE]
-    zch = zernikeMoments(c, h, N=4, R=60)[,zf,drop=FALSE]
-    zcm = zernikeMoments(c, m, N=4, R=60)[,zf,drop=FALSE]
-    zna = zernikeMoments(n, a, N=4, R=60)[,zf,drop=FALSE]
-    znt = zernikeMoments(n, t, N=4, R=60)[,zf,drop=FALSE]
-    znh = zernikeMoments(n, h, N=4, R=60)[,zf,drop=FALSE]
-    colnames(zca) = paste('c.a.', colnames(zca), sep='')
-    colnames(zct) = paste('c.t.', colnames(zct), sep='')
-    colnames(zch) = paste('c.h.', colnames(zch), sep='')
-    colnames(zcm) = paste('c.m.', colnames(zcm), sep='')
-    colnames(zna) = paste('n.a.', colnames(zna), sep='')
-    colnames(znt) = paste('n.t.', colnames(znt), sep='')
-    colnames(znh) = paste('n.h.', colnames(znh), sep='')
-    
-    ## Haralick features
+
+    ## basic features
+    msg('basic')
+    bca = computeFeatures.basic(c, a) 
+    bct = computeFeatures.basic(c, t) 
+    bch = computeFeatures.basic(c, h) 
+    bcm = computeFeatures.basic(c, m) 
+    bna = computeFeatures.basic(n, a) 
+    bnt = computeFeatures.basic(n, t) 
+    bnh = computeFeatures.basic(n, h) 
+    colnames(bca) = paste('c.a.', colnames(bca), sep='')
+    colnames(bct) = paste('c.t.', colnames(bct), sep='')
+    colnames(bch) = paste('c.h.', colnames(bch), sep='')
+    colnames(bcm) = paste('c.m.', colnames(bcm), sep='')
+    colnames(bna) = paste('n.a.', colnames(bna), sep='')
+    colnames(bnt) = paste('n.t.', colnames(bnt), sep='')
+    colnames(bnh) = paste('n.h.', colnames(bnh), sep='')
+
+    ## haralick features
     msg('haralick')
-    hca = myharalickFeatures(c, a)
-    hct = myharalickFeatures(c, t)
-    hch = myharalickFeatures(c, h)
-    hcm = myharalickFeatures(c, m)
-    hna = myharalickFeatures(n, a)
-    hnt = myharalickFeatures(n, t)
-    hnh = myharalickFeatures(n, h)
+    hca = computeFeatures.haralick(c, a)
+    hct = computeFeatures.haralick(c, t)
+    hch = computeFeatures.haralick(c, h)
+    hcm = computeFeatures.haralick(c, m)
+    hna = computeFeatures.haralick(n, a)
+    hnt = computeFeatures.haralick(n, t)
+    hnh = computeFeatures.haralick(n, h)
     colnames(hca) = paste('c.a.', colnames(hca), sep='')
     colnames(hct) = paste('c.t.', colnames(hct), sep='')
     colnames(hch) = paste('c.h.', colnames(hch), sep='')
@@ -97,18 +96,18 @@ getCellFtrsATH = function(cal, seg) {
     san = split(a, n)[-1]
     stn = split(t, n)[-1]
     shn = split(h, n)[-1]
-    catc = mapply(cor, sac, stc)
-    cahc = mapply(cor, sac, shc)
-    cthc = mapply(cor, stc, shc)
-    catn = mapply(cor, san, stn)
-    cahn = mapply(cor, san, shn)
-    cthn = mapply(cor, stn, shn)
+    catc = mapply(stats::cor, sac, stc)
+    cahc = mapply(stats::cor, sac, shc)
+    cthc = mapply(stats::cor, stc, shc)
+    catn = mapply(stats::cor, san, stn)
+    cahn = mapply(stats::cor, san, shn)
+    cthn = mapply(stats::cor, stn, shn)
     cor = cbind(c.at.cor=catc, c.ah.cor=cahc, c.th.cor=cthc,
       n.at.cor=catn, n.ah.cor=cahn, n.th.cor=cthn)
 
     cbind(gc, gn,
           mca, mct, mch, mcm, mna, mnt, mnh,
-          zca, zct, zch, zcm, zna, znt, znh,
+          bca, bct, bch, bcm, bna, bnt, bnh,
           hca, hct, hch, hcm, hna, hnt, hnh,
           cor)
   })

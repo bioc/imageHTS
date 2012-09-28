@@ -2,8 +2,8 @@ zprime = function(a, b, method=c('mahalanobis', 'robust', 'fixsd', 'original')) 
   method = match.arg(method)
   
   if (method=='mahalanobis') {
-    if (is.null(dim(a))) a = matrix(a, nc=1)
-    if (is.null(dim(b))) b = matrix(b, nc=1)
+    if (is.null(dim(a))) a = matrix(a, ncol=1)
+    if (is.null(dim(b))) b = matrix(b, ncol=1)
     mua = apply(a, 2, mean)
     mub = apply(b, 2, mean)
     dm = try(mahalanobis(mua, mub, cov(a) + cov(b)))

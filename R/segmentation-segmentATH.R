@@ -76,29 +76,35 @@ segmentATH = function(x, uname, p, access) {
 
   msg("segmenting nuclei using watershed")
   nmask = watershed(distmap(nmask), p$nuc.watershed.tolerance, p$nuc.watershed.neighbourood)
-  hf = hullFeatures(nmask); if (dimh[3]==1) hf = list(hf)
-  mom = cmoments(nmask, h); if (dimh[3]==1) mom = list(mom)
-  nfts = mapply(function(x,y) as.data.frame(cbind(x,y)), hf, mom, SIMPLIFY=FALSE)
+  nfts = lapply(1:dimh[3], function(i) {
+    nmask0 <- getFrame(nmask, i)
+    h0 <- getFrame(h, i)
+    cbind(computeFeatures.basic(nmask0, h0), computeFeatures.shape(nmask0))
+  })
   rmindex = lapply(nfts,
-    function(n) which(n$m.int/n$m.pxs<p$nuc.min.density |
-                      n$m.pxs<p$nuc.min.size |
-                      n$m.pxs>p$nuc.max.size))
+    function(n) which(n[,"b.mean"]<p$nuc.min.density |
+                      n[,"s.area"]<p$nuc.min.size |
+                      n[,"s.area"]>p$nuc.max.size))
   nseg = fillHull(rmObjects(nmask, rmindex))
   
   msg("segmenting cells using Voronoi tesselation")
   cmask = fillHull(propagate(mix^p$cell.propagate.mix.power, nseg, cmask, p$cell.propagate.lambda))
-  hf = hullFeatures(cmask);   if (dimh[3]==1) hf = list(hf)
-  mom = cmoments(cmask, mix); if (dimh[3]==1) mom = list(mom)
-  cfts = mapply(function(x,y) as.data.frame(cbind(x,y)), hf, mom, SIMPLIFY=FALSE)
-
+  cfts = lapply(1:dimh[3], function(i) {
+    cmask0 <- getFrame(cmask, i)
+    mix0 <- getFrame(mix, i)
+    cbind(computeFeatures.basic(cmask0, mix0), computeFeatures.shape(cmask0))
+  })
+  
   msg("filtering bad cells")
   rmindex = lapply(cfts, function(c) 
-    which(c$g.edge/c$g.p>p$cell.max.edgepratio | c$m.int/c$m.pxs<p$cell.min.density | 
-          c$m.pxs<p$cell.min.size | c$m.pxs>p$cell.max.size | c$g.p>p$cell.max.perimeter))
+    which(c[,"b.mean"]<p$cell.min.density | 
+          c[,"s.area"]<p$cell.min.size |
+          c[,"s.area"]>p$cell.max.size |
+          c[,"s.perimeter"]>p$cell.max.perimeter))
   cseg = fillHull(rmObjects(cmask, rmindex))
   nseg = fillHull(rmObjects(nseg, rmindex))
 
-  res = list(cal=rgbImage(r=a, g=t, b=h), nseg=nseg, cseg=cseg)
+  res = list(cal=rgbImage(red=a, green=t, blue=h), nseg=nseg, cseg=cseg)
   
   msg("segmentATH OK")
   cat(' nbcells=', countObjects(cseg), sep='')

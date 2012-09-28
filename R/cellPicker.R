@@ -182,12 +182,3 @@ getCoords = function(segmentedImage, tolErr=3) {
   }		
   return (finalCoords)	
 }
-
-test.popCellPicker = function() {
-  ts = readHTS(x, type="file", filename="conf/trainingset.txt", access=access, format="tab")
-  z = ts$label=="P"
-  uname = ts$uname[z]
-  spot = ts$spot[z]
-  id = ts$id[z]
-  popCellPicker(x, uname, spot, id)
-}
