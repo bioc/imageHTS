@@ -1,3 +1,6 @@
+version 1.9.1:
+- synchronized vignette to changes in EBImage
+
 version 1.7.1:
 - now using EBImage 3.99.17
 

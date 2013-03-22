@@ -10,11 +10,7 @@
 \usepackage{color}
 \definecolor{darkblue}{rgb}{0.2,0.0,0.4}
 
-\topmargin -1.5cm
-\oddsidemargin -0cm   % read Lamport p.163
-\evensidemargin -0cm  % same as oddsidemargin but for left-hand pages
-\textwidth 17cm
-\textheight 24.5cm
+\usepackage[a4paper,left=2.2cm,top=2.2cm,bottom=2.8cm,right=2.2cm,ignoreheadfoot]{geometry}
 
 \newcommand{\lib}[1]{{\mbox{\normalfont\textsf{#1}}}}
 \newcommand{\file}[1]{{\mbox{\normalfont\textsf{'#1'}}}}
@@ -236,7 +232,7 @@ dim(y)
 y[1:10, 1:7]
 @ 
 
-89 cells are present in the well and each cell is described with 180 features.
+\Sexpr{dim(y)[1]} cells are present in the well and each cell is described with \Sexpr{dim(y)[2]} features.
 Cell features include geometrical features, moment-based features, Haralick moments and 
 Zernicke features. Cell features are described in the manual pages of the function
 \Rfunction{getFeatures} of the package EBImage. Some features have a direct
@@ -304,6 +300,7 @@ trained classifier. The following example trains a cell classifier, but is
 not run in the vignette due to time constraints.
 
 <<readLearnTS, eval=FALSE>>=
+set.seed(1)
 readLearnTS(x, 'conf/featurepar.txt', 'conf/trainingset.txt')
 @ 
 
@@ -318,7 +315,7 @@ cell classes: I (interphase), M (mitotic) and D (debris).
 predictCellLabels(x, uname)
 @ 
 
-76 interphase, 8 mitotic and 5 debris cells were predicted in the image.
+74 interphase, 7 mitotic and 7 debris cells were predicted in the image.
 The following example retrieves and displays the predicted cell labels.
 
 <<drawCellLabels>>=
@@ -378,11 +375,11 @@ avef = do.call(rbind, lapply(zwf, function(z) colMeans(profiles[z, ft])))
 print(avef)
 @ 
 
-There are 4 \Robject{rluc} negative controls, 4 \Robject{ubc} positive controls
-and 4 \Robject{sample} wells in this screen. The average number of cells in
-\Robject{ubc} wells is 26.25, lower than in \Robject{rluc} wells, 99.25. 
-Moreover, the average fraction of debris cells in \Robject{ubc} wells, 0.48, 
-is higher than in \Robject{rluc} wells, 0.04. A larger number of replicates and
+There are \Sexpr{table(wfcontent)["rluc"]} \Robject{rluc} negative controls, \Sexpr{table(wfcontent)["ubc"]} \Robject{ubc} positive controls
+and \Sexpr{table(wfcontent)["sample"]} \Robject{sample} wells in this screen. The average number of cells in
+\Robject{ubc} wells is \Sexpr{sprintf("%.2f", avef["ubc","n"])}, lower than in \Robject{rluc} wells, \Sexpr{sprintf("%.2f", avef["rluc","n"])}. 
+Moreover, the average fraction of debris cells in \Robject{ubc} wells, \Sexpr{sprintf("%.2f", avef["ubc","D"])}, 
+is higher than in \Robject{rluc} wells, \Sexpr{sprintf("%.2f", avef["rluc","D"])}. A larger number of replicates and
 proper statistical testing would be needed to determine whether the observed
 changes are statistically significant.
 
@@ -485,7 +482,7 @@ boxplot(xd$med.c.g.ec~wfcontent, las=2, col=colors, main='Median cell eccentrici
 @
 \begin{figure}[!h]
 \begin{center}
-\includegraphics{imageHTS-introduction-boxplots}
+\includegraphics[width=0.9\textwidth]{imageHTS-introduction-boxplots}
 \end{center}
 \caption{Distribution of median cell size and median cell eccentricity among well types.}
 \label{fig:boxplots}
