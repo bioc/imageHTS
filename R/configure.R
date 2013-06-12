@@ -123,7 +123,7 @@ buildCellHTS = function(x, assayName, channelNames=NULL, nbPlates, nbReplicates,
                varMetadata=data.frame(labelDescription=c("Replicate number",
                                         "Biological assay"),
                  channel=factor(rep("_ALL_", 2L),
-                   levels=c(names(adata), "_ALL_")),
+                   levels=c(ls(adata), "_ALL_")),
                  row.names=c("replicate", "assay"),
                  stringsAsFactors=FALSE))
   
