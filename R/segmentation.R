@@ -142,3 +142,28 @@ highlightSegmentation = function(cal, nseg=NULL, cseg=NULL, thick=FALSE) {
     hseg
   }
 }
+
+paintContours = function(seg, cal, opac, col, thick, closed){
+  if(is.na(closed))
+    closed = ifelse(thick, TRUE, FALSE) ## previous default behaviour
+  
+  if(closed)
+    col = c(col, NA, col)  ## paint pixels at borders
+  
+  EBImage:::paintObjects2(seg, cal, opac=rep_len(opac,2), col=col, thick)
+}
+
+highlightSegmentation2 = function(cal, nseg=NULL, cseg=NULL, thick=FALSE, opac=1, col=c('#ffff00', '#ff00ff'), closed=NA) {
+  ## check arguments
+  if (colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
+  
+  opac = rep_len(opac, 2) 
+  opac[is.na(opac)] = 0
+  col = rep_len(col, 2)
+  
+  if (!is.null(nseg)) 
+    cal = paintContours(nseg, cal, opac=opac[1], col=col[1], thick, closed)
+  if (!is.null(cseg)) 
+    cal = paintContours(cseg, cal, opac=opac[2], col=col[2], thick, closed)
+  cal
+}
