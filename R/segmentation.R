@@ -121,8 +121,8 @@ paintObjectsOpaque = function(seg, cal, ...) {
 }
 
 highlightSegmentation = function(cal, nseg=NULL, cseg=NULL, thick=FALSE) {
-  if (colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
   if (thick) {
+    if (colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
     if (!is.null(nseg)) {
       w = nseg!=translate(nseg, c(0,1)) | nseg!=translate(nseg, c(1,0)) | nseg!=translate(nseg, c(0,-1)) | nseg!=translate(nseg, c(-1,0))
       w = w==1
@@ -143,27 +143,27 @@ highlightSegmentation = function(cal, nseg=NULL, cseg=NULL, thick=FALSE) {
   }
 }
 
-paintContours = function(seg, cal, opac, col, thick, closed){
-  if(is.na(closed))
-    closed = ifelse(thick, TRUE, FALSE) ## previous default behaviour
+paintContours = function(seg, cal, opac, col, thick, border){
+  if(is.na(border))
+    border = ifelse(isTRUE(thick), TRUE, FALSE) ## previous default behaviour
   
-  if(closed)
+  if(isTRUE(border))
     col = c(col, NA, col)  ## paint pixels at borders
   
   EBImage:::paintObjects2(seg, cal, opac=rep_len(opac,2), col=col, thick)
 }
 
-highlightSegmentation2 = function(cal, nseg=NULL, cseg=NULL, thick=FALSE, opac=1, col=c('#ffff00', '#ff00ff'), closed=NA) {
+highlightSegmentation2 = function(cal, nseg=NULL, cseg=NULL, thick=FALSE, opac=1, col=c('#ffff00', '#ff00ff'), toRGB=TRUE, border=NA) {
   ## check arguments
-  if (colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
+  if (isTRUE(toRGB) && colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
   
   opac = rep_len(opac, 2) 
   opac[is.na(opac)] = 0
   col = rep_len(col, 2)
   
   if (!is.null(nseg)) 
-    cal = paintContours(nseg, cal, opac=opac[1], col=col[1], thick, closed)
+    cal = paintContours(nseg, cal, opac=opac[1], col=col[1], thick, border)
   if (!is.null(cseg)) 
-    cal = paintContours(cseg, cal, opac=opac[2], col=col[2], thick, closed)
+    cal = paintContours(cseg, cal, opac=opac[2], col=col[2], thick, border)
   cal
 }
