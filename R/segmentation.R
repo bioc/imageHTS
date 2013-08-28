@@ -121,8 +121,8 @@ paintObjectsOpaque = function(seg, cal, ...) {
 }
 
 highlightSegmentation = function(cal, nseg=NULL, cseg=NULL, thick=FALSE) {
+  if (colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
   if (thick) {
-    if (colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
     if (!is.null(nseg)) {
       w = nseg!=translate(nseg, c(0,1)) | nseg!=translate(nseg, c(1,0)) | nseg!=translate(nseg, c(0,-1)) | nseg!=translate(nseg, c(-1,0))
       w = w==1
