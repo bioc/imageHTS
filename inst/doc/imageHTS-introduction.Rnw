@@ -3,26 +3,11 @@
 %\VignettePackage{imageHTS}
 
 \documentclass[10pt,a4paper]{article}
+<<style, echo=FALSE, results=tex>>=
+BiocStyle::latex(width=92)
+@
 \RequirePackage{amsfonts,amsmath,amstext,amssymb,amscd}
 \usepackage{graphicx}
-\usepackage{verbatim}
-\usepackage{hyperref}
-\usepackage{color}
-\definecolor{darkblue}{rgb}{0.2,0.0,0.4}
-
-\usepackage[a4paper,left=2.2cm,top=2.2cm,bottom=2.8cm,right=2.2cm,ignoreheadfoot]{geometry}
-
-\newcommand{\lib}[1]{{\mbox{\normalfont\textsf{#1}}}}
-\newcommand{\file}[1]{{\mbox{\normalfont\textsf{'#1'}}}}
-\newcommand{\R}{{\mbox{\normalfont\textsf{R}}}}
-\newcommand{\Rfunction}[1]{{\mbox{\normalfont\texttt{#1}}}}
-\newcommand{\Robject}[1]{{\mbox{\normalfont\texttt{#1}}}}
-\newcommand{\Rpackage}[1]{{\mbox{\normalfont\textsf{#1}}}}
-\newcommand{\Rclass}[1]{{\mbox{\normalfont\textit{#1}}}}
-\newcommand{\code}[1]{{\mbox{\normalfont\texttt{#1}}}}
-
-\newcommand{\email}[1]{\mbox{\href{mailto:#1}{\textcolor{darkblue}{\normalfont{#1}}}}}
-\newcommand{\web}[2]{\mbox{\href{#2}{\textcolor{darkblue}{\normalfont{#1}}}}}
 
 \SweaveOpts{keep.source=TRUE,eps=FALSE,include=FALSE}
 

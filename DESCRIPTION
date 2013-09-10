@@ -1,5 +1,5 @@
 Package: imageHTS
-Version: 1.11.4
+Version: 1.11.5
 Title: Analysis of high-throughput microscopy-based screens
 Author: Gregoire Pau, Xian Zhang, Michael Boutros, Wolfgang Huber
 Maintainer: Gregoire Pau <gregoire.pau@embl.de>
@@ -7,5 +7,5 @@ Depends: R (>= 2.9.0), EBImage (>= 4.3.6), cellHTS2 (>= 2.10.0)
 Imports: tools, Biobase, hwriter, methods, vsn, stats, utils, e1071
 Description: imageHTS is an R package dedicated to the analysis of high-throughput microscopy-based screens. The package provides a modular and extensible framework to segment cells, extract quantitative cell features, predict cell types and browse screen data through web interfaces. Designed to operate in distributed environments, imageHTS provides a standardized access to remote data and facilitates the dissemination of high-throughput microscopy-based datasets.
 License: LGPL-2.1
-biocViews: CellBasedAssays, Visualization, Preprocessing
-Suggests: MASS
+biocViews: Software, Bioinformatics, CellBasedAssays, Preprocessing, Visualization
+Suggests: BiocStyle, MASS

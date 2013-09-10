@@ -6,7 +6,7 @@ nuc.morpho.kernel: makeBrush(3, shape='diamond')
 nuc.watershed.tolerance: 3
 nuc.watershed.neighbourood: 2
 nuc.min.density: 0.1
-nuc.min.size: 150.0625
+nuc.min.size: 125.0625
 nuc.max.size: 2070.25
 
 adj.a: 2.82*a - 0.17

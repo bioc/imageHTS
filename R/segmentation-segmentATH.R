@@ -66,15 +66,9 @@ segmentATH = function(x, uname, p, access) {
   mix = untile(mix, montage)
   nmask = untile(nmask, montage)
   cmask = untile(cmask, montage)
- 
-  msg("adding edge of the cell mask to nuclei mask")
-  dimh = dim(h)
-  tmp = cmask
-  tmp[2:(dimh[1]-1),2:(dimh[2]-1),] = 0.0
-  nmask[tmp>0] = 1.0
-  cmask[nmask>0] = 1.0
-
+  
   msg("segmenting nuclei using watershed")
+  dimh = dim(h)
   nmask = watershed(distmap(nmask), p$nuc.watershed.tolerance, p$nuc.watershed.neighbourood)
   nfts = lapply(1:dimh[3], function(i) {
     nmask0 <- getFrame(nmask, i)
