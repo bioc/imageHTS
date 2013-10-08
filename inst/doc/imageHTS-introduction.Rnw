@@ -293,14 +293,21 @@ After training, prediction of cell labels is done by the function
 \Rfunction{predictCellLabels}. The function writes for each well
 a vector of predicted cell labels. The following example predicts
 the cell labels of the well '01-02-C03', using a classifier
-previously trained on a set of 184 cells labelled with 3
+previously trained on a set of \Sexpr{length(readLines(system.file('submorph/conf','trainingset.txt', package='imageHTS')))-1} cells labelled with 3
 cell classes: I (interphase), M (mitotic) and D (debris).
 
 <<predictCellLabels>>=
 predictCellLabels(x, uname)
 @ 
+<<predictCellLabelsOutput, echo=FALSE>>=
+cellLabels = capture.output(predictCellLabels(x, uname))
+cellLabels = unlist(strsplit(cellLabels,"[= ]")) 
+cellNumber = function(x) {
+  as.integer(cellLabels[which(cellLabels==x)+1])
+}
+@ 
 
-74 interphase, 7 mitotic and 7 debris cells were predicted in the image.
+\Sexpr{cellNumber("I")} interphase, \Sexpr{cellNumber("M")} mitotic and \Sexpr{cellNumber("D")} debris cells were predicted in the image.
 The following example retrieves and displays the predicted cell labels.
 
 <<drawCellLabels>>=
