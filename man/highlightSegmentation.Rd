@@ -20,7 +20,7 @@
 \item{opac}{A numeric of the opacity value for drawing object contours; can be either a single numeric value or a numeric vector containing two opacity values, the first one for nuclei and the second one for cell bodies. Opacity ranges from 0 to 1, with 0 being fully transparent and 1 fully opaque}
 \item{col}{A character vector of two R colors for drawing contours of nuclei and cell bodies. By default, nuclei are highlighted in \code{yellow} and cells are highlighted in \code{magenta}.}
 \item{border}{A logical indicating whether contours should be closed at borders or not. Default is \code{FALSE}.}
-\item{toRGB}{A logical indicating whether whether Grayscale images should be promoted to Color ones or not. Default is \code{TRUE}.}
+\item{toRGB}{A logical indicating whether Grayscale images should be promoted to Color ones or not. Default is \code{TRUE}.}
 }
 
 \value{
