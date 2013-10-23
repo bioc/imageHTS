@@ -595,7 +595,6 @@ toLatex(sessionInfo())
 @ 
 
 \bibliography{imageHTS}
-\bibliographystyle{plain}
 
 \end{document}
 
