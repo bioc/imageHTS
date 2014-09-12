@@ -49,7 +49,7 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
 
     ## write calibrated images
     if (write.cal.view) {
-      nbimages = getNumberOfFrames(cal, 'render')
+      nbimages = numberOfFrames(cal, 'render')
       for (spot in 1:nbimages) {       
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')
         frame = getFrame(cal, spot, type='render')
@@ -76,7 +76,7 @@ segmentWells = function (x, uname, segmentationPar, access='cache', writeData=TR
     
     ## write calibrated images with segmentation information
     if (write.seg.view) {
-      nbimages = getNumberOfFrames(hseg, 'render')
+      nbimages = numberOfFrames(hseg, 'render')
       for (spot in 1:nbimages) {
         frame = getFrame(hseg, spot, type='render')
         ff = fileHTS(x, 'viewunmonted', uname=uname, spot=spot, createPath=TRUE, access='local')

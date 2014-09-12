@@ -1,5 +1,5 @@
 getCellFtrsATH = function(cal, seg) {
-  nf = getNumberOfFrames(cal, 'render')
+  nf = numberOfFrames(cal, 'render')
   nseg = seg$nseg
   cseg = seg$cseg
 

@@ -13,7 +13,7 @@ importFrom(utils, browseURL, download.file, read.table, URLencode,
 
 importFrom(e1071, svm, tune)
 importFrom(EBImage, closing, cmoments, dilate, distmap, erode,
-           fillHull, filter2, getNumberOfFrames, haralickFeatures,
+           fillHull, filter2, numberOfFrames, haralickFeatures,
            hullFeatures, moments, ocontour, opening, paintObjects,
            propagate, readImage, resize, rgbImage, rmObjects, tile,
            translate, untile, watershed, writeImage, zernikeMoments)
