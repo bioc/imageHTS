@@ -1,47 +1,48 @@
 importClassesFrom(Biobase, AnnotatedDataFrame, AssayData, data.frameOrNULL, MIAME, Versions, NChannelSet, eSet, VersionedBiobase, Versioned)
 importMethodsFrom(Biobase, fData)
-importFrom(Biobase, "assayDataNew")
+importFrom(Biobase, assayDataNew)
+importFrom(cellHTS2, buildCellHTS2, convertWellCoordinates)
 importClassesFrom(cellHTS2, cellHTS)
-importMethodsFrom(cellHTS2, annotate, configure, geneAnno, pdim, plate)
+importMethodsFrom(cellHTS2, annotate, configure, geneAnno, "name<-", pdim, plate)
 importFrom(hwriter, hwrite, hwriteImage)
 importFrom(methods, getMethod, new, signature)
 importMethodsFrom(vsn, predict)
-importFrom(stats, cov, mad, mahalanobis, median, na.omit, quantile, sd,
-           var)
-importFrom(utils, browseURL, download.file, read.table, URLencode,
-           write.table)
+importFrom(stats, cov, mad, mahalanobis, median, na.omit, quantile, sd, var)
+importFrom(utils, browseURL, download.file, read.table, URLencode, write.table)
 
 importFrom(e1071, svm, tune)
-importFrom(EBImage, closing, cmoments, dilate, distmap, erode,
-           fillHull, filter2, numberOfFrames, haralickFeatures,
-           hullFeatures, moments, ocontour, opening, paintObjects,
-           propagate, readImage, resize, rgbImage, rmObjects, tile,
-           toRGB, translate, untile, watershed, writeImage, zernikeMoments)
+importFrom(EBImage, closing, colorMode,
+           computeFeatures.basic, computeFeatures.haralick, computeFeatures.moment, computeFeatures.shape,
+           dilate, distmap, drawCircle, erode,
+           fillHull, filter2, getFrame, Grayscale, makeBrush, numberOfFrames,
+           ocontour, opening, paintObjects,
+           propagate, readImage, resize, rgbImage, rmObjects, tile, thresh,
+           toRGB, translate, untile, watershed, writeImage)
 
-exportClasses("imageHTS")
+exportClasses(imageHTS)
 
 export(
        ## core
-       "parseImageConf",
+       parseImageConf,
 
        ## process well
-       "segmentWells", "extractFeatures", "readLearnTS", "predictCellLabels", "summarizeWells",
+       segmentWells, extractFeatures, readLearnTS, predictCellLabels, summarizeWells,
 
        ## HeLa cells
-       "segmentATH", "getCellFtrsATH",
+       segmentATH, getCellFtrsATH,
 
        ## Yeast BF
-       "segmentYeastBF", "segmentRing", 
+       segmentYeastBF, segmentRing, 
        
        ## inspect screen data
-       "installWebQuery", "popWebQuery", "installCellPicker", "popCellPicker", "makeCellHTS",
+       installWebQuery, popWebQuery, installCellPicker, popCellPicker, makeCellHTS,
 
        ## access
-       "fileHTS", "readHTS", "parseDCF", "collectCellFeatures", "getWellFeatures",
+       fileHTS, readHTS, parseDCF, collectCellFeatures, getWellFeatures,
 
        ## uname
-       "getUnames", "prw2uname", "uname2prw", "rowcol2well", "well2rowcol", "well2wellid",
+       getUnames, prw2uname, uname2prw, rowcol2well, well2rowcol, well2wellid,
 
        ## misc
-       "zprime", "highlightSegmentation",  "countObjects", "getImageConf"
+       zprime, highlightSegmentation, countObjects, getImageConf
 )
