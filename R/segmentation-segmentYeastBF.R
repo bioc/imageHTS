@@ -63,7 +63,6 @@ segmentRing = function(a, p) {
         cseg = drawCircle(cseg, x, y, r-as.numeric(p$cell.radius.offset), i, fill=TRUE)
       }
     }
-    ## display(highlightSegmentation(a, nseg, cseg))
   }
   
   list(cseg=cseg, nseg=nseg)

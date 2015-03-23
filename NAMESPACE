@@ -16,7 +16,7 @@ importFrom(EBImage, closing, cmoments, dilate, distmap, erode,
            fillHull, filter2, numberOfFrames, haralickFeatures,
            hullFeatures, moments, ocontour, opening, paintObjects,
            propagate, readImage, resize, rgbImage, rmObjects, tile,
-           translate, untile, watershed, writeImage, zernikeMoments)
+           toRGB, translate, untile, watershed, writeImage, zernikeMoments)
 
 exportClasses("imageHTS")
 

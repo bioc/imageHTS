@@ -112,64 +112,17 @@ countObjects = function(cseg) {
   else max(cseg)
 }
 
-## AO: is this function needed at all?
-# paintObjectsOpaque = function(seg, cal, ...) {
-#   bcal = Image(0, dim=dim(cal), colormode=colorMode(cal))
-#   bcal = paintObjects(seg, bcal, col='white')
-#   cal[as.logical(bcal)] = 0
-#   paintObjects(seg, cal, ...)
-# }
-# 
-# highlightSegmentation = function(cal, nseg=NULL, cseg=NULL, thick=FALSE) {
-#   if (colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
-#   if (thick) {
-#     if (!is.null(nseg)) {
-#       w = nseg!=translate(nseg, c(0,1)) | nseg!=translate(nseg, c(1,0)) | nseg!=translate(nseg, c(0,-1)) | nseg!=translate(nseg, c(-1,0))
-#       w = w==1
-#       cal[rep(w, 3)] = c(rep(1, sum(w)*2), rep(0, sum(w)))
-#     }
-# 
-#     if (!is.null(cseg)) {
-#       w = cseg!=translate(cseg, c(0,1)) | cseg!=translate(cseg, c(1,0)) | cseg!=translate(cseg, c(0,-1)) | cseg!=translate(cseg, c(-1,0))
-#       w = w==1
-#       cal[rep(w, 3)] = c(rep(1, sum(w)), rep(0, sum(w)), rep(1, sum(w)))
-#     }
-#     cal
-#   } else {
-#     if (!is.null(nseg)) hseg = paintObjectsOpaque(nseg, cal, col=c('#ffff00'))
-#     else hseg = cal
-#     if (!is.null(cseg)) hseg = paintObjectsOpaque(cseg, hseg, col=c('#ff00ff'))
-#     hseg
-#   }
-# }
-
-# paintContours = function(seg, cal, opac, col, thick, border){
-# #   if(is.na(border))
-# #     border = ifelse(isTRUE(thick), TRUE, FALSE) ## previous default behaviour
-#   
-#   if(isTRUE(border))
-#     col = c(col, NA, col)  ## paint pixels at borders
-#   
-#   EBImage:::paintObjects2(seg, cal, opac=rep_len(opac,2), col=col, thick)
-# }
-
 highlightSegmentation = function(cal, nseg=NULL, cseg=NULL, thick=FALSE, opac=1, col=c('#ffff00', '#ff00ff'), border=FALSE, toRGB=TRUE) {
   ## check arguments
-  if (isTRUE(toRGB) && colorMode(cal)==Grayscale) cal = EBImage::channel(cal, 'rgb')
+  if ( isTRUE(toRGB) && colorMode(cal)==Grayscale ) cal = toRGB(cal)
   
-  opac = rep_len(as.numeric(opac), 2)
+  opac = rep_len(as.numeric(opac), 2L)
   opac[is.na(opac)] = 0
-  col = rep_len(col, 2)
-  if(isTRUE(border))
-    col = c(col, NA, NA, col)
-  else
-    col = c(col, NA, NA, NA, NA)  
-    
-  col = matrix(col, 2, 3)
+  col = rep_len(col, 2L)
   
   if (!is.null(nseg))
-    cal = paintObjects(nseg, cal, opac=rep_len(opac[1], 2), col=col[1,], thick)
-  if (!is.null(cseg)) 
-    cal = paintObjects(cseg, cal, opac=rep_len(opac[2], 2), col=col[2,], thick)
+    cal = paintObjects(nseg, cal, opac=opac[1L], col=col[1L], thick, border)
+  if (!is.null(cseg))
+    cal = paintObjects(cseg, cal, opac=opac[2L], col=col[2L], thick, border)
   cal
 }
