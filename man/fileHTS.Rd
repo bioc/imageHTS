@@ -117,7 +117,7 @@ readHTS(x, 'file', filename='conf/featurepar.txt', format='dcf')
 
 ## initialize imageHTS object using the remote kimorph screen
 local = tempdir()
-server = 'http://www.ebi.ac.uk/~gpau/imageHTS/screens/kimorph'
+server = 'http://www.ebi.ac.uk/huber-srv/cellmorph/kimorph/'
 x = parseImageConf('conf/imageconf.txt', localPath=local, serverURL=server)
 
 ## get cell features for well '002-02-D06'
