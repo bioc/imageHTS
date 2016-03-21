@@ -4,7 +4,7 @@
 
 \documentclass[10pt,a4paper]{article}
 <<style, echo=FALSE, results=tex>>=
-BiocStyle::latex(width=92)
+BiocStyle:::latex2()
 @
 \RequirePackage{amsfonts,amsmath,amstext,amssymb,amscd}
 \usepackage{graphicx}
