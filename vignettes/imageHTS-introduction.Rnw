@@ -1,10 +1,11 @@
 %\VignetteIndexEntry{Analysis of high-throughput microscopy-based screens with imageHTS}
 %\VignetteKeywords{high-throughput, microscopy-based screens, image processing, high-content screening}
 %\VignettePackage{imageHTS}
+%\usepackage{Sweave} % Sweave gets already loaded by BiocStyle
 
-\documentclass[10pt,a4paper]{article}
+\documentclass[]{article}
 <<style, echo=FALSE, results=tex>>=
-BiocStyle:::latex2()
+BiocStyle::latex2()
 @
 \RequirePackage{amsfonts,amsmath,amstext,amssymb,amscd}
 \usepackage{graphicx}
@@ -14,10 +15,12 @@ BiocStyle:::latex2()
 \begin{document}
 
 \title{Analysis of high-throughput microscopy-based screens with imageHTS}
-\author{Gregoire Pau, Xian Zhang, Michael Boutros, Wolfgang Huber\\\email{gregoire.pau@embl.de}}
+\author{Gregoire Pau, Xian Zhang, Michael Boutros, and Wolfgang Huber \\\email{gregoire.pau@embl.de}}
 \maketitle
 
 \tableofcontents
+
+\newpage
 
 \section{Introduction}
 
@@ -75,7 +78,8 @@ library('imageHTS')
 <<parseImageConf>>=
 localPath = tempdir()
 serverURL = system.file('submorph', package='imageHTS')
-x = parseImageConf('conf/imageconf.txt', localPath=localPath, serverURL=serverURL)
+x = parseImageConf('conf/imageconf.txt', localPath=localPath,
+                   serverURL=serverURL)
 @
 
 The imageHTS object \Robject{x} is now instantiated. The function \Rfunction{configure}
@@ -88,7 +92,8 @@ cellHTS class and both functions are fully compatible with their cellHTS2 counte
 See cellHTS2 documentation for details.
 
 <<configure>>=
-x = configure(x, 'conf/description.txt', 'conf/plateconf.txt', 'conf/screenlog.txt')
+x = configure(x, 'conf/description.txt', 'conf/plateconf.txt',
+                 'conf/screenlog.txt')
 x = annotate(x, 'conf/annotation.txt')
 @
 
@@ -139,7 +144,8 @@ cells in bright field images or segmenting organelles stained with specific mark
 <<segmentWells1>>=
 uname = getUnames(x, content='rluc')[3]
 print(uname)
-y =  segmentWells(x, uname=uname, segmentationPar='conf/segmentationpar.txt')
+y =  segmentWells(x, uname=uname,
+                     segmentationPar='conf/segmentationpar.txt')
 display(y$cal)
 hseg = highlightSegmentation(0.6*y$cal, y$nseg, y$cseg, thick=TRUE)
 display(hseg)
@@ -149,19 +155,15 @@ writeImage(y$cal, 'cal.jpeg', quality=80)
 writeImage(hseg, 'hseg.jpeg', quality=80)
 @
 
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.9\textwidth]{cal.jpeg}
+\begin{figure}
+\includegraphics{cal.jpeg}
 \caption{Calibrated image 'y\$cal' from well '001-02-C03'.}
-\end{center}
 \end{figure}
 
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.9\textwidth]{hseg.jpeg}
+\begin{figure}
+\includegraphics{hseg.jpeg}
 \caption{Segmented image 'hseg' from well '001-02-C03'. Cell nucleus is
   highlighted in yellow and cell membrane is indicated in magenta.}
-\end{center}
 \end{figure}
 
 Segmentation of the full screen is done with the following commands and
@@ -234,13 +236,11 @@ abline(v=1600, col=2)
 cellid = which(ctub>1600)
 print(cellid)
 @
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.6\textwidth]{imageHTS-introduction-histfig}
-\end{center}
+\begin{smallfigure}
+\includegraphics{imageHTS-introduction-histfig}
 \caption{Distribution of cell tubulin intensity in cells of well '001-02-C03'.}
 \label{fig:histfig}
-\end{figure}
+\end{smallfigure}
 
 Five cells have a tubulin content higher than 1600. Since rows of
 cell feature matrix are synchronised with cell indexes in segmentation masks, 
@@ -258,11 +258,9 @@ display(hightub)
 writeImage(hightub, 'hightub.jpeg', quality=80)
 @
 
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.9\textwidth]{hightub.jpeg}
+\begin{figure}
+\includegraphics{hightub.jpeg}
 \caption{Cells of well '001-02-C03' having a tubulin intensity higher than 1600.}
-\end{center}
 \end{figure}
 
 \subsection{Prediction of cell classes}
@@ -316,19 +314,19 @@ labid = split(1:nrow(clab), clab$label)
 inter = seg$cseg%in%labid$I
 mito = seg$cseg%in%labid$M
 debris = seg$cseg%in%labid$D
-dc = Image(c(inter+mito, inter, debris+inter), colormode='Color', dim=c(dim(seg$cseg)[1:2], 3))
-dc = highlightSegmentation(0.5*dc+0.2*drop(cal), cseg=seg$cseg, thick=TRUE)
+dc = Image(c(inter+mito, inter, debris+inter), colormode='Color',
+           dim=c(dim(seg$cseg)[1:2], 3))
+dc = highlightSegmentation(0.5*dc+0.2*drop(cal), cseg=seg$cseg,
+                           thick=TRUE)
 display(dc)
 @ 
 <<drawCellLabelsh, echo=FALSE>>= 
 writeImage(dc, 'dc.jpeg', quality=80)
 @
 
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.9\textwidth]{dc.jpeg}
+\begin{figure}
+\includegraphics{dc.jpeg}
 \caption{Predicted cell labels (grey: interphase, red: mitotic, blue: debris) in well '001-02-C03'.}
-\end{center}
 \end{figure}
 
 Overall prediction is very good, except for few cells. Classification performance
@@ -358,12 +356,15 @@ features are considered: n (cell number), med.c.s.area (median cell size), med.c
 density), M (mitotic cell fraction) and D (debris cell fraction).
 
 <<sum>>=
-profiles = readHTS(x, type='file', filename='data/profiles.tab', format='tab')
-wfcontent = factor(as.character(getWellFeatures(x, unames)$controlStatus))
+profiles = readHTS(x, type='file', filename='data/profiles.tab',
+                   format='tab')
+wfcontent = 
+  factor(as.character(getWellFeatures(x, unames)$controlStatus))
 table(wfcontent)
 zwf = split(1:nrow(profiles), wfcontent)
 ft = c('n', 'med.c.s.area', 'med.c.t.b.mean', 'M', 'D')
-avef = do.call(rbind, lapply(zwf, function(z) colMeans(profiles[z, ft])))
+avef = do.call(rbind,
+               lapply(zwf, function(z) colMeans(profiles[z, ft])))
 print(avef)
 @ 
 
@@ -406,8 +407,10 @@ The example is not run in this vignette, due to time constraints.
 library('imageHTS')
 localPath = tempdir()
 serverURL = system.file('submorph', package='imageHTS')
-x = parseImageConf('conf/imageconf.txt', localPath=localPath, serverURL=serverURL)
-x = configure(x, 'conf/description.txt', 'conf/plateconf.txt', 'conf/screenlog.txt')
+x = parseImageConf('conf/imageconf.txt', localPath=localPath,
+                   serverURL=serverURL)
+x = configure(x, 'conf/description.txt', 'conf/plateconf.txt',
+                 'conf/screenlog.txt')
 x = annotate(x, 'conf/annotation.txt')
 unames = setdiff(getUnames(x), getUnames(x, content='empty'))
 segmentWells(x, unames, 'conf/segmentationpar.txt')
@@ -438,8 +441,10 @@ automatically downloaded from the remote server.
 <<init, results=hide>>=
 localPath = file.path(tempdir(), 'kimorph')
 serverURL = 'http://www.ebi.ac.uk/huber-srv/cellmorph/kimorph/'
-x = parseImageConf('conf/imageconf.txt', localPath=localPath, serverURL=serverURL)
-x = configure(x, 'conf/description.txt', 'conf/plateconf.txt', 'conf/screenlog.txt')
+x = parseImageConf('conf/imageconf.txt', localPath=localPath,
+                   serverURL=serverURL)
+x = configure(x, 'conf/description.txt', 'conf/plateconf.txt',
+                 'conf/screenlog.txt')
 x = annotate(x, 'conf/annotation.txt')
 @
 
@@ -466,16 +471,16 @@ median cell size \Robject{med.c.g.ss} and median cell eccentricity \Robject{med.
 vary within well types.
 
 <<boxplots, fig=TRUE, width=14, height=7>>=
-colors = c('#ffffff', NA, '#aaffff', '#ffaaff', '#ff44aa',  '#aaaaff',  '#aaffaa', 
-  '#ff7777', '#aaaaaa', '#ffff77')
+colors = c('#ffffff', NA, '#aaffff', '#ffaaff', '#ff44aa', '#aaaaff',
+           '#aaffaa', '#ff7777', '#aaaaaa', '#ffff77')
 par(mfrow=c(1,2))
-boxplot(xd$med.c.g.ss~wfcontent, las=2, col=colors, main='Median cell size (a.u.)')
-boxplot(xd$med.c.g.ec~wfcontent, las=2, col=colors, main='Median cell eccentricity (a.u.)')
+boxplot(xd$med.c.g.ss~wfcontent, las=2, col=colors,
+        main='Median cell size (a.u.)')
+boxplot(xd$med.c.g.ec~wfcontent, las=2, col=colors,
+        main='Median cell eccentricity (a.u.)')
 @
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.9\textwidth]{imageHTS-introduction-boxplots}
-\end{center}
+\begin{figure}
+\includegraphics{imageHTS-introduction-boxplots}
 \caption{Distribution of median cell size and median cell eccentricity among well types.}
 \label{fig:boxplots}
 \end{figure}
@@ -498,10 +503,8 @@ py = predict(ld, xd[, ft])
 plot(py$x[,1:2])
 @ 
 
-%\begin{figure}[!h]
-%\begin{center}
+%\begin{figure}
 %\includegraphics[width=0.45\textwidth]{imageHTS-introduction-lda1}
-%\end{center}
 %\caption{LDA projection of the phenotypic profiles, computed on the
 %  control \Robject{rluc}, \Robject{ubc} and \Robject{trappc3} wells.}
 %\label{fig:lda}
@@ -525,12 +528,10 @@ writeImage(img1, 'img1.jpeg', quality=80)
 writeImage(img2, 'img2.jpeg', quality=80)
 @
 
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.45\textwidth]{img1.jpeg}
-\includegraphics[width=0.45\textwidth]{img2.jpeg}
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{img1.jpeg}
+\includegraphics[width=0.5\textwidth]{img2.jpeg}
 \caption{Well '001-01-A13' and '002-01-I13' showing staining problems.}
-\end{center}
 \end{figure}
 
 Wells '001-01-A13' and '002-01-I13' have serious staining problems. This is 
@@ -544,17 +545,14 @@ z = wfcontent!='sample'
 points(py$x[z,1:2], col=1, bg=colors[wfcontent[z]], pch=21)
 col = rep(1, length(levels(wfcontent)))
 col[2] = NA
-legend('topleft', legend=levels(wfcontent), col=col, pt.bg=colors[1:length(wfcontent)],
-       pch=21, ncol=2, cex=0.8) 
+legend('topleft', legend=levels(wfcontent), col=col,
+       pt.bg=colors[1:length(wfcontent)], pch=21, ncol=2, cex=0.8) 
 @
 
-\begin{figure}[!h]
-\begin{center}
+\begin{figure}
 \includegraphics{imageHTS-introduction-lda2}
-\end{center}
 \caption{LDA projection of the phenotypic profiles, computed on the
   control \Robject{rluc}, \Robject{ubc} and \Robject{trappc3} wells.}
-\label{fig:lda}
 \end{figure}
 
 Control wells \Robject{ubc}, \Robject{clspn}, \Robject{rluc} and \Robject{trappc3} are
@@ -577,11 +575,9 @@ uname = getUnames(x, content='trappc3')[1]
 popCellPicker(x, uname)
 @ 
 
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.8\textwidth]{webquery.jpeg}\\
-\includegraphics[width=0.8\textwidth]{cellpicker.jpeg}
-\end{center}
+\begin{figure}
+\includegraphics{webquery.jpeg}\\[1ex]
+\includegraphics{cellpicker.jpeg}
 \caption{The webQuery (top) and cellPicker (bottom) web modules.}
 \label{fig:web}
 \end{figure}
@@ -590,7 +586,7 @@ popCellPicker(x, uname)
 
 This document was produced using:
 
-<<sessionInfo, results=tex, print=TRUE>>=
+<<sessionInfo, results=tex, echo=FALSE>>=
 toLatex(sessionInfo())
 @ 
 
