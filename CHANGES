@@ -1,3 +1,6 @@
+version 1.25.1:
+- it became necessary to enforce the storage mode of cmask to be integer in the segmentATH function
+
 version 1.19.1:
 - change online location of kimorph screen from "http://www.ebi.ac.uk/˜gpau/imageHTS/screens/kimorph/" to "http://www.ebi.ac.uk/huber-srv/cellmorph/kimorph/"
 

@@ -79,10 +79,12 @@ segmentATH = function(x, uname, p, access) {
     function(n) which(n[,"b.mean"]<p$nuc.min.density |
                       n[,"s.area"]<p$nuc.min.size |
                       n[,"s.area"]>p$nuc.max.size))
-  nseg = fillHull(rmObjects(nmask, rmindex))
+  nmask = rmObjects(nmask, rmindex)
+  nseg = fillHull(nmask)
   
   msg("segmenting cells using Voronoi tesselation")
   cmask = fillHull(propagate(mix^p$cell.propagate.mix.power, nseg, cmask, p$cell.propagate.lambda))
+  storage.mode(cmask) <- "integer"
   cfts = lapply(1:dimh[3], function(i) {
     cmask0 <- getFrame(cmask, i)
     mix0 <- getFrame(mix, i)
@@ -95,8 +97,10 @@ segmentATH = function(x, uname, p, access) {
           c[,"s.area"]<p$cell.min.size |
           c[,"s.area"]>p$cell.max.size |
           c[,"s.perimeter"]>p$cell.max.perimeter))
-  cseg = fillHull(rmObjects(cmask, rmindex))
-  nseg = fillHull(rmObjects(nseg, rmindex))
+  cmask = rmObjects(cmask, rmindex)
+  nseg = rmObjects(nseg, rmindex)
+  cseg = fillHull(cmask)
+  nseg = fillHull(nseg)
 
   res = list(cal=rgbImage(red=a, green=t, blue=h), nseg=nseg, cseg=cseg)
   
