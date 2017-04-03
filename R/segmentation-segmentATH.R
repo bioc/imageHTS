@@ -70,6 +70,7 @@ segmentATH = function(x, uname, p, access) {
   msg("segmenting nuclei using watershed")
   dimh = dim(h)
   nmask = watershed(distmap(nmask), p$nuc.watershed.tolerance, p$nuc.watershed.neighbourood)
+  storage.mode(nmask) <- "integer"
   nfts = lapply(1:dimh[3], function(i) {
     nmask0 <- getFrame(nmask, i)
     h0 <- getFrame(h, i)

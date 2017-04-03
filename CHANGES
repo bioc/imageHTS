@@ -1,3 +1,6 @@
+version 1.25.2:
+- changed storage mode of nmask to integer in segmentATH
+
 version 1.25.1:
 - it became necessary to enforce the storage mode of cmask to be integer in the segmentATH function
 
