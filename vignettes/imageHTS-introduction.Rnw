@@ -5,7 +5,7 @@
 
 \documentclass[]{article}
 <<style, echo=FALSE, results=tex>>=
-BiocStyle::latex2()
+BiocStyle::latex()
 @
 \RequirePackage{amsfonts,amsmath,amstext,amssymb,amscd}
 \usepackage{graphicx}
