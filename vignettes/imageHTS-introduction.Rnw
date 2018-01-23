@@ -427,8 +427,8 @@ The dual repository architecture of imageHTS allows an easy access to remote scr
 In the following, we are analysing the full \Robject{kimorph} RNAi screen, targeting
 about 800 protein coding genes in HeLa cells. Screen details are available in \cite{pmid20531400}.
 The screen has been previously analysed by imageHTS and screen data is located at
-\url{http://www.ebi.ac.uk/huber-srv/cellmorph/kimorph/}. The interactive webQuery browsing
-interface is available at \url{http://www.ebi.ac.uk/huber-srv/cellmorph/kimorph/webquery/}.
+\url{http://www.huber.embl.de/cellmorph/kimorph/}. The interactive webQuery browsing
+interface is available at \url{http://www.huber.embl.de/cellmorph/kimorph/webquery/}.
 
 \subsection{Initialization}
 
@@ -440,7 +440,7 @@ automatically downloaded from the remote server.
 
 <<init, results=hide>>=
 localPath = file.path(tempdir(), 'kimorph')
-serverURL = 'http://www.ebi.ac.uk/huber-srv/cellmorph/kimorph/'
+serverURL = 'http://www.huber.embl.de/cellmorph/kimorph/'
 x = parseImageConf('conf/imageconf.txt', localPath=localPath,
                    serverURL=serverURL)
 x = configure(x, 'conf/description.txt', 'conf/plateconf.txt',
