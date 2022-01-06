@@ -112,15 +112,10 @@ x = parseImageConf('conf/imageconf.txt', localPath=local, serverURL=server)
 
 ## fileHTS and readHTS examples
 fileHTS(x, 'file', filename='conf/imageconf.txt')
-fileHTS(x, 'source', uname='001-01-C05', channel=1)
 readHTS(x, 'file', filename='conf/featurepar.txt', format='dcf')
 
 ## initialize imageHTS object using the remote kimorph screen
 local = tempdir()
-server = 'http://www.ebi.ac.uk/huber-srv/cellmorph/kimorph/'
+server = 'http://www.huber.embl.de/cellmorph/kimorph/'
 x = parseImageConf('conf/imageconf.txt', localPath=local, serverURL=server)
-
-## get cell features for well '002-02-D06'
-f = readHTS(x, 'ftrs', uname='002-02-D06')
-cat('nb cells=', nrow(f), '\n')
 }
