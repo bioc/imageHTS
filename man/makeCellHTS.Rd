@@ -48,7 +48,7 @@ makeCellHTS(x, profiles, measurementNames, name)
  \dontrun{
    ## initialize kimorph object
    localPath = file.path(tempdir(), 'kimorph')
-   serverURL = 'http://www.ebi.ac.uk/huber-srv/cellmorph/kimorph/'
+   serverURL = 'http://www.huber.embl.de/cellmorph/kimorph/'
    x = parseImageConf('conf/imageconf.txt', localPath=localPath, serverURL=serverURL)
    x = configure(x, 'conf/description.txt', 'conf/plateconf.txt', 'conf/screenlog.txt')
    x = annotate(x, 'conf/annotation.txt')

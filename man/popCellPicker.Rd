@@ -56,7 +56,7 @@ popWebQuery(x, access='server', browse=TRUE)
 \examples{
 ## initialize imageHTS object using the remote kimorph screen
 local = tempdir()
-server = 'http://www.ebi.ac.uk/huber-srv/cellmorph/kimorph/'
+server = 'http://www.huber.embl.de/cellmorph/kimorph/'
 x = parseImageConf('conf/imageconf.txt', localPath=local, serverURL=server)
 
 if (interactive()) {
