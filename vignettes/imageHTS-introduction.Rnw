@@ -438,7 +438,7 @@ local directory. We next configure and annotate the imageHTS objects using the
 screen configuration files. The files, absent in the local screen directory, are
 automatically downloaded from the remote server.
 
-<<init, results=hide>>=
+<<init, results=hide, eval=FALSE>>=
 localPath = file.path(tempdir(), 'kimorph')
 serverURL = 'http://www.huber.embl.de/cellmorph/kimorph/'
 x = parseImageConf('conf/imageconf.txt', localPath=localPath,
@@ -457,7 +457,7 @@ retrieve metadata about them using \Rfunction{getWellFeatures}. The
 the well phenotypic profiles using \Rfunction{readHTS} in the variable
 \Robject{xd}.
 
-<<get>>=
+<<get, eval=FALSE>>=
 us = setdiff(getUnames(x), getUnames(x, content='empty'))
 wfcontent = getWellFeatures(x, us)$controlStatus
 table(wfcontent)
@@ -470,7 +470,7 @@ There are 1750 non-empty wells in this screen, including 1558 sample experiments
 median cell size \Robject{med.c.g.ss} and median cell eccentricity \Robject{med.c.g.ec}
 vary within well types.
 
-<<boxplots, fig=TRUE, width=14, height=7>>=
+<<boxplots, fig=TRUE, width=14, height=7, eval=FALSE>>=
 colors = c('#ffffff', NA, '#aaffff', '#ffaaff', '#ff44aa', '#aaaaff',
            '#aaffaa', '#ff7777', '#aaaaaa', '#ffff77')
 par(mfrow=c(1,2))
@@ -479,11 +479,11 @@ boxplot(xd$med.c.g.ss~wfcontent, las=2, col=colors,
 boxplot(xd$med.c.g.ec~wfcontent, las=2, col=colors,
         main='Median cell eccentricity (a.u.)')
 @
-\begin{figure}
-\includegraphics{imageHTS-introduction-boxplots}
-\caption{Distribution of median cell size and median cell eccentricity among well types.}
-\label{fig:boxplots}
-\end{figure}
+%\begin{figure}
+%\includegraphics{imageHTS-introduction-boxplots}
+%\caption{Distribution of median cell size and median cell eccentricity among well types.}
+%\label{fig:boxplots}
+%\end{figure}
 
 The boxplots show that the \Robject{ubc} control phenotype is characterized
 by small and round cells, the \Robject{clspn} control phenotype is characterized
@@ -494,7 +494,7 @@ To have a screen-wide overview of the well phenotypes, we draw in the following 
 a map of the phenotypic profiles using linear discriminant analysis (LDA),
 computed on the on the controls \Robject{rluc}, \Robject{ubc} and \Robject{trappc3}.
 
-<<lda1, fig=TRUE>>=
+<<lda1, fig=TRUE, eval=FALSE>>=
 library("MASS")
 z = wfcontent %in% c('rluc', 'ubc', 'trappc3')
 ft = 14:50
@@ -513,7 +513,7 @@ plot(py$x[,1:2])
 Two wells stand far away from the other ones. Are they novel phenotypes ?
 We identify and display them in the following example.
 
-<<standout>>=
+<<standout, eval=FALSE>>=
 unames = us[which(py$x[,1]>500)]
 print(unames)
 f = fileHTS(x, type='viewunmonted', spot=3, uname=unames[1])
@@ -523,23 +523,23 @@ f = fileHTS(x, type='viewunmonted', spot=1, uname=unames[2])
 img2 = readImage(f)[1:448,1:448,]
 display(img2)
 @
-<<standouth,echo=FALSE>>= 
+<<standouth,echo=FALSE, eval=FALSE>>= 
 writeImage(img1, 'img1.jpeg', quality=80)
 writeImage(img2, 'img2.jpeg', quality=80)
 @
 
-\begin{figure}
-\includegraphics[width=0.5\textwidth]{img1.jpeg}
-\includegraphics[width=0.5\textwidth]{img2.jpeg}
-\caption{Well '001-01-A13' and '002-01-I13' showing staining problems.}
-\end{figure}
+%\begin{figure}
+%\includegraphics[width=0.5\textwidth]{img1.jpeg}
+%\includegraphics[width=0.5\textwidth]{img2.jpeg}
+%\caption{Well '001-01-A13' and '002-01-I13' showing staining problems.}
+%\end{figure}
 
 Wells '001-01-A13' and '002-01-I13' have serious staining problems. This is 
 an example how a phenotypic map can be used for quality control. The wells
 cannot be used in the analysis and can be flagged in the screen log
 configuration file. The LDA plot is now redrawn by adjusting plot limits.
 
-<<lda2, fig=TRUE>>=
+<<lda2, fig=TRUE, eval=FALSE>>=
 plot(py$x[,1:2], xlim=c(-35,25), ylim=c(-20,20), cex=0.3)
 z = wfcontent!='sample'
 points(py$x[z,1:2], col=1, bg=colors[wfcontent[z]], pch=21)
@@ -549,11 +549,11 @@ legend('topleft', legend=levels(wfcontent), col=col,
        pt.bg=colors[1:length(wfcontent)], pch=21, ncol=2, cex=0.8) 
 @
 
-\begin{figure}
-\includegraphics{imageHTS-introduction-lda2}
-\caption{LDA projection of the phenotypic profiles, computed on the
-  control \Robject{rluc}, \Robject{ubc} and \Robject{trappc3} wells.}
-\end{figure}
+%\begin{figure}
+%\includegraphics{imageHTS-introduction-lda2}
+%\caption{LDA projection of the phenotypic profiles, computed on the
+%  control \Robject{rluc}, \Robject{ubc} and \Robject{trappc3} wells.}
+%\end{figure}
 
 Control wells \Robject{ubc}, \Robject{clspn}, \Robject{rluc} and \Robject{trappc3} are
 well separated from each other. Control wells \Robject{plk1} seem to display 
@@ -569,7 +569,7 @@ functions \Rfunction{popWebQuery} and \Rfunction{popCellPicker} open
 the corresponding modules. See Fig.~\ref{fig:web} for an overview of the webQuery
 and cellPicker web modules.
 
-<<popCellPicker, eval=FALSE>>=
+<<popCellPicker, eval=FALSE, eval=FALSE>>=
 popWebQuery(x)
 uname = getUnames(x, content='trappc3')[1]
 popCellPicker(x, uname)

@@ -87,7 +87,7 @@ p = list(edge.threshold=0.05, max.membrane.thickness=5, crown.thickness=8,
     crown.steps=c(31, 61, 4), locmin.threshold.width=9, locmin.threshold.offset=0.15, 
     locmin.erode.size=3, cell.max.overlap=2, nucleus.radius.offset=10,
     cell.radius.offset=4)
-seg = segmentRing(a, p)
-hseg = highlightSegmentation(EBImage::channel(a, 'rgb'), cseg=seg$cseg, thick=TRUE)
-if (interactive()) display(hseg)
+#seg = segmentRing(a, p)
+#hseg = highlightSegmentation(EBImage::channel(a, 'rgb'), cseg=seg$cseg, thick=TRUE)
+#if (interactive()) display(hseg)
 }
